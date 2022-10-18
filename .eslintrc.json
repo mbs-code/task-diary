@@ -13,6 +13,8 @@
   ],
   "rules": {
     "quotes": ["warn", "single"],
-    "comma-dangle": ["warn", "only-multiline"]
+    "comma-dangle": ["warn", "always-multiline"],
+    "vue/no-v-model-argument": "off",
+    "@typescript-eslint/no-unused-vars": "warn"
   }
 }

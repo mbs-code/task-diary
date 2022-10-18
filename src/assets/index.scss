@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300&display=swap');
+
+* {
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.p-dialog-header,
+.p-dialog-footer {
+  @apply !py-2;
+}
+
+.p-dialog-footer {
+  @apply flex items-center gap-2;
+
+  button {
+    @apply !p-2;
+  }
+}
