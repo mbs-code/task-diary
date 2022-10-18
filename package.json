@@ -13,5 +13,9 @@
     "nuxt": "3.0.0-rc.11",
     "typescript": "^4.8.4",
     "vite-plugin-eslint": "^1.8.1"
+  },
+  "dependencies": {
+    "primeicons": "^6.0.1",
+    "primevue": "^3.17.0"
   }
 }
