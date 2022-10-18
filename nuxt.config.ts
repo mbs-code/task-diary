@@ -6,12 +6,6 @@ export default defineNuxtConfig({
   srcDir: 'src/',
   ssr: false,
 
-  css: [
-    // 'primevue/resources/themes/bootstrap4-dark-blue/theme.css',
-    // 'primevue/resources/primevue.css',
-    // 'primeicons/primeicons.css'
-  ],
-
   app: {
     head: {
       script: [
@@ -34,4 +28,8 @@ export default defineNuxtConfig({
 
     plugins: [eslint({ fix: true })],
   },
+
+  modules: [
+    'nuxt-windicss',
+  ],
 })
