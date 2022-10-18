@@ -1,0 +1,18 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "extends": [
+    "@nuxtjs",
+    "@nuxtjs/eslint-config-typescript"
+  ],
+  "rules": {
+    "quotes": ["warn", "single"],
+    "comma-dangle": ["warn", "only-multiline"]
+  }
+}
