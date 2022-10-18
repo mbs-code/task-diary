@@ -18,6 +18,7 @@
     "vite-plugin-eslint": "^1.8.1"
   },
   "dependencies": {
+    "date-fns": "^2.29.3",
     "primeicons": "^6.0.1",
     "primevue": "^3.17.0"
   }

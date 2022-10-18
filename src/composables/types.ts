@@ -4,3 +4,11 @@ export type Project = {
   label?: string
   color?: string
 }
+
+export type Report = {
+  id: number
+  text: string
+  project: Project
+  startAt?: Date
+  endAt?: Date
+}
