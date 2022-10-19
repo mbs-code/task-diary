@@ -7,6 +7,7 @@ import Dropdown from 'primevue/dropdown'
 import Avatar from 'primevue/avatar'
 import Card from 'primevue/card'
 import Chip from 'primevue/chip'
+import Menu from 'primevue/menu'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(PrimeVue, { ripple: true })
@@ -17,4 +18,5 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('Avatar', Avatar)
   nuxtApp.vueApp.component('Card', Card)
   nuxtApp.vueApp.component('Chip', Chip)
+  nuxtApp.vueApp.component('Menu', Menu)
 })

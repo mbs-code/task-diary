@@ -8,7 +8,22 @@
 
     <Card class="ml-3rem" @dblclick="switchEditMode">
       <template #title>
-        <ProjectLabel :project="report.project" />
+        <Avatar
+          class="!w-6 !h-6"
+          :label="report.project.label"
+          :style="{ backgroundColor: report.project.color }"
+        />
+
+        <span>{{ report.project.name }}</span>
+
+        <div class="flex-grow" />
+
+        <Button
+          type="button"
+          icon="pi pi-ellipsis-v"
+          class="p-button-plain p-button-rounded p-button-text"
+          @click.stop="openMenu"
+        />
       </template>
 
       <template #content>
@@ -22,6 +37,7 @@
             @keydown.ctrl.s.stop="onSave"
           />
         </template>
+
         <template v-else>
           <div class="whitespace-pre-wrap break-words">
             {{ report.text }}
@@ -34,6 +50,7 @@
 
 <script setup lang="ts">
 import { format as dateFormat } from 'date-fns'
+import { MenuItem } from 'primevue/menuitem'
 import Textarea from 'primevue/textarea'
 import { Report } from '~~/src/composables/types'
 
@@ -43,8 +60,22 @@ const props = defineProps<{
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
+  (e: 'open:menu', event: MouseEvent, items: MenuItem[]),
   (e: 'saved', report: Report),
 }>()
+
+/// ////////////////////////////////////////
+// メニュー系
+
+const menuItems = ref<MenuItem[]>([
+  { label: '編集', icon: 'pi pi-pencil', command: () => console.log('edit') },
+  { label: '星をつける', icon: 'pi pi-star', command: () => console.log('star') },
+  { label: '削除', icon: 'pi pi-trash', command: () => console.log('delete') },
+])
+
+const openMenu = (event: MouseEvent) => {
+  emit('open:menu', event, menuItems.value)
+}
 
 /// ////////////////////////////////////////
 
