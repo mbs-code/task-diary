@@ -1,13 +1,8 @@
 <template>
-  <div class="relative">
-    <Chip
-      class="absolute top-[1.6rem] left-0"
-      :label="time"
-      :style="{ background: 'var(--surface-200)' }"
-    />
-
-    <Card class="ml-3rem">
-      <!-- ヘッダ -->
+  <div class="report-card-wrapper">
+    <!-- カード本体 -->
+    <Card class="report-card" :class="{ 'has-star': report.isStar }">
+      <!-- カードヘッダ -->
       <template #title>
         <Avatar
           class="!w-6 !h-6"
@@ -41,7 +36,7 @@
         </template>
       </template>
 
-      <!-- コンテンツ -->
+      <!-- カードコンテンツ -->
       <template #content>
         <template v-if="isEditMode">
           <Textarea
@@ -64,6 +59,14 @@
         </template>
       </template>
     </Card>
+
+    <!-- 時間要素 -->
+    <Chip class="report-card-time" :label="time" />
+
+    <!-- ピン要素 -->
+    <div v-if="report.isStar" class="report-card-pin">
+      <i class="pi pi-star-fill" />
+    </div>
   </div>
 </template>
 
@@ -121,3 +124,38 @@ const onSave = () => {
   switchViewMode()
 }
 </script>
+
+<style lang="scss">
+.report-card-wrapper {
+  position: relative;
+
+  .report-card {
+    margin-left: 3rem;
+
+    &.has-star {
+      border: solid 3px var(--yellow-700);
+    }
+  }
+
+  .report-card-time {
+    position: absolute;
+    top: 1.6rem;
+    left: 0;
+    background-color: var(--surface-200);
+  }
+
+  .report-card-pin {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2rem;
+    height: 2rem;
+    color: white;
+    background-color: var(--yellow-700);
+    border-top-right-radius: 4px;
+    border-bottom-left-radius: 1rem;
+    padding-top: 0.2rem;
+    padding-left: 0.6rem;
+  }
+}
+</style>

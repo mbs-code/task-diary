@@ -57,6 +57,7 @@ const reports = ref<Report[]>([
     project: { id: 1, name: 'KK案件', label: 'K', color: 'green' },
     startAt: new Date('2022-10-19 10:12:33'),
     endAt: new Date('2022-10-19 12:01:00'),
+    isStar: true,
   },
   {
     id: 2,
@@ -65,6 +66,7 @@ const reports = ref<Report[]>([
     project: { id: 2, name: '案件W', label: '😎' },
     startAt: new Date('2022-10-19 13:00:33'),
     endAt: null,
+    isStar: false,
   },
   {
     id: 3,
@@ -72,6 +74,7 @@ const reports = ref<Report[]>([
     project: { id: 1, name: 'KK案件', label: 'K', color: 'green' },
     startAt: new Date('2022-10-20 10:12:33'),
     endAt: new Date('2022-10-20 11:01:00'),
+    isStar: false,
   },
   {
     id: 4,
@@ -79,6 +82,7 @@ const reports = ref<Report[]>([
     project: { id: 1, name: 'KK案件', label: 'K', color: 'green' },
     startAt: null,
     endAt: null,
+    isStar: false,
   },
   {
     id: 5,
@@ -86,6 +90,7 @@ const reports = ref<Report[]>([
     project: { id: 2, name: '案件W', label: '😎' },
     startAt: null,
     endAt: null,
+    isStar: true,
   },
 ])
 

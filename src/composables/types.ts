@@ -11,4 +11,5 @@ export type Report = {
   project: Project
   startAt?: Date
   endAt?: Date
+  isStar: boolean
 }
