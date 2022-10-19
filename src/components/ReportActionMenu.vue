@@ -24,21 +24,21 @@ const menuItems = ref<MenuItem[]>([
     label: '編集',
     icon: 'pi pi-pencil',
     command: () => {
-      console.log('edit')
+      window.alert('edit')
     },
   },
   {
     label: '星をつける',
     icon: 'pi pi-star',
     command: () => {
-      console.log('star')
+      window.alert('star')
     },
   },
   {
     label: '削除',
     icon: 'pi pi-trash',
     command: () => {
-      console.log('delete')
+      window.alert('delet')
     },
   },
 ])
