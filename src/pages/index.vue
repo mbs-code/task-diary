@@ -1,27 +1,43 @@
 <template>
   <div>
-    <Button @click="openReportEditDialog">
-      asd
-    </Button>
+    <NuxtLayout>
+      <template #header>
+        <div>2022-10-19 20:00</div>
+        <div class="flex-grow" name="padding" />
+        <Button
+          class="p-button-plain p-button-text !w-8 !h-8"
+          icon="pi pi-file-edit"
+          @click="openReportEditDialog"
+        />
+      </template>
 
-    <div class="flex flex-col gap-2" style="width: 400px">
-      <ReportCard
-        v-for="(report, _) of reports"
-        :key="_"
-        :report="report"
-        @open:menu="openCardMenu"
-        @saved="replaceReport"
-      />
+      <div class="flex flex-col gap-2" style="width: 400px">
+        <ReportCard
+          v-for="(report, _) of reports"
+          :key="_"
+          :report="report"
+          @open:menu="openCardMenu"
+          @saved="replaceReport"
+        />
 
-      <ReportActionMenu ref="reportMenuRef" :report="selectedReport" />
-    </div>
+        <ReportActionMenu ref="reportMenuRef" :report="selectedReport" />
+      </div>
 
-    <ReportEditDialog v-model:visible="showReportEditDialog" />
+      <ReportEditDialog v-model:visible="showReportEditDialog" />
+    </NuxtLayout>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Report } from '~~/src/composables/types'
+
+/// ////////////////////////////////////////
+// ダイアログ系
+
+const showReportEditDialog = ref<boolean>(false)
+const openReportEditDialog = () => {
+  showReportEditDialog.value = !showReportEditDialog.value
+}
 
 /// ////////////////////////////////////////
 // メニュー系
@@ -32,15 +48,6 @@ const openCardMenu = (event: MouseEvent, report: Report) => {
   selectedReport.value = report
   reportMenuRef.value?.toggle(event)
 }
-
-/// ////////////////////////////////////////
-// ダイアログ系
-
-const showReportEditDialog = ref<boolean>(true) // false)
-const openReportEditDialog = () => {
-  showReportEditDialog.value = !showReportEditDialog.value
-}
-
 /// ////////////////////////////////////////
 
 const reports = ref<Report[]>([
