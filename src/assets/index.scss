@@ -14,7 +14,7 @@
     @apply flex items-center gap-2;
 
     button {
-      @apply !p-2;
+      @apply !px-3 !py-2;
     }
   }
 }

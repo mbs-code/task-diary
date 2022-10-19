@@ -13,7 +13,7 @@
         @saved="replaceReport"
       />
 
-      <Menu ref="cardMenuRef" :model="cardMenuItems" :popup="true" />
+      <ReportActionMenu ref="reportMenuRef" :report="selectedReport" />
     </div>
 
     <ReportEditDialog v-model:visible="showReportEditDialog" />
@@ -21,23 +21,27 @@
 </template>
 
 <script setup lang="ts">
-import { MenuItem } from 'primevue/menuitem'
 import { Report } from '~~/src/composables/types'
 
-const cardMenuItems = ref<MenuItem[]>([])
-const cardMenuRef = ref()
+/// ////////////////////////////////////////
+// メニュー系
 
-const openCardMenu = (event: MouseEvent, items: MenuItem[]) => {
-  cardMenuItems.value = items
-  cardMenuRef.value.toggle(event)
+const reportMenuRef = ref()
+const selectedReport = ref<Report>()
+const openCardMenu = (event: MouseEvent, report: Report) => {
+  selectedReport.value = report
+  reportMenuRef.value?.toggle(event)
 }
 
-///
+/// ////////////////////////////////////////
+// ダイアログ系
 
 const showReportEditDialog = ref<boolean>(true) // false)
 const openReportEditDialog = () => {
   showReportEditDialog.value = !showReportEditDialog.value
 }
+
+/// ////////////////////////////////////////
 
 const reports = ref<Report[]>([
   {
@@ -61,6 +65,20 @@ const reports = ref<Report[]>([
     project: { id: 1, name: 'KK案件', label: 'K', color: 'green' },
     startAt: new Date('2022-10-20 10:12:33'),
     endAt: new Date('2022-10-20 11:01:00'),
+  },
+  {
+    id: 4,
+    text: 'aaaa\nbbbb\ncccc\ndddd\neeee\n',
+    project: { id: 1, name: 'KK案件', label: 'K', color: 'green' },
+    startAt: null,
+    endAt: null,
+  },
+  {
+    id: 5,
+    text: 'aaaa\nbbbb\ncccc\ndddd\neeee\n',
+    project: { id: 2, name: '案件W', label: '😎' },
+    startAt: null,
+    endAt: null,
   },
 ])
 

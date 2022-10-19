@@ -6,7 +6,8 @@
       :style="{ background: 'var(--surface-200)' }"
     />
 
-    <Card class="ml-3rem" @dblclick="switchEditMode">
+    <Card class="ml-3rem">
+      <!-- ヘッダ -->
       <template #title>
         <Avatar
           class="!w-6 !h-6"
@@ -18,14 +19,29 @@
 
         <div class="flex-grow" />
 
-        <Button
-          type="button"
-          icon="pi pi-ellipsis-v"
-          class="p-button-plain p-button-rounded p-button-text"
-          @click.stop="openMenu"
-        />
+        <template v-if="isEditMode">
+          <Button
+            icon="pi pi-save"
+            class="p-button-rounded"
+            @click="onSave"
+          />
+          <Button
+            icon="pi pi-times"
+            class="p-button-plain p-button-rounded p-button-text"
+            @click="switchViewMode"
+          />
+        </template>
+
+        <template v-else>
+          <Button
+            icon="pi pi-ellipsis-v"
+            class="p-button-plain p-button-rounded p-button-text"
+            @click="openMenu"
+          />
+        </template>
       </template>
 
+      <!-- コンテンツ -->
       <template #content>
         <template v-if="isEditMode">
           <Textarea
@@ -39,7 +55,10 @@
         </template>
 
         <template v-else>
-          <div class="whitespace-pre-wrap break-words">
+          <div
+            class="whitespace-pre-wrap break-words min-h-4"
+            @dblclick="switchEditMode"
+          >
             {{ report.text }}
           </div>
         </template>
@@ -50,7 +69,6 @@
 
 <script setup lang="ts">
 import { format as dateFormat } from 'date-fns'
-import { MenuItem } from 'primevue/menuitem'
 import Textarea from 'primevue/textarea'
 import { Report } from '~~/src/composables/types'
 
@@ -60,21 +78,15 @@ const props = defineProps<{
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (e: 'open:menu', event: MouseEvent, items: MenuItem[]),
+  (e: 'open:menu', event: MouseEvent, report: Report),
   (e: 'saved', report: Report),
 }>()
 
 /// ////////////////////////////////////////
 // メニュー系
 
-const menuItems = ref<MenuItem[]>([
-  { label: '編集', icon: 'pi pi-pencil', command: () => console.log('edit') },
-  { label: '星をつける', icon: 'pi pi-star', command: () => console.log('star') },
-  { label: '削除', icon: 'pi pi-trash', command: () => console.log('delete') },
-])
-
 const openMenu = (event: MouseEvent) => {
-  emit('open:menu', event, menuItems.value)
+  emit('open:menu', event, props.report)
 }
 
 /// ////////////////////////////////////////
