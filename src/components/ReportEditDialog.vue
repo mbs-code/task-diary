@@ -1,5 +1,9 @@
 <template>
-  <Dialog v-model:visible="visible" class="w-[400px]">
+  <Dialog
+    v-model:visible="visible"
+    class="w-[400px]"
+    :close-on-escape="false"
+  >
     <template #header>
       <h3>新規作成</h3>
     </template>
