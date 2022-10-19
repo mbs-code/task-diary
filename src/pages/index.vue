@@ -2,7 +2,7 @@
   <div>
     <NuxtLayout>
       <template #header>
-        <div>2022-10-19 20:00</div>
+        <div>Task Diary</div>
         <div class="flex-grow" name="padding" />
         <Button
           class="p-button-plain p-button-text !w-8 !h-8"
@@ -11,27 +11,7 @@
         />
       </template>
 
-      <div class="flex flex-col gap-8">
-        <div
-          v-for="(dayReport, _) of dayReports"
-          :key="_"
-          class="flex gap-2"
-        >
-          <ReportListDate class="sticky top-0 h-full py-2" :date="dayReport.date" />
-
-          <div class="flex flex-col gap-4" style="width: 400px; padding: 0.5rem; border-radius: 4px">
-            <ReportCard
-              v-for="(report, __) of dayReport.reports"
-              :key="`${_}-${__}`"
-              :report="report"
-              @open:menu="openCardMenu"
-            />
-            <!-- @saved="replaceReport" -->
-          </div>
-        </div>
-      </div>
-
-      <ReportActionMenu ref="reportMenuRef" :report="selectedReport" />
+      <ReportList :day-reports="dayReports" />
 
       <ReportEditDialog v-model:visible="showReportEditDialog" />
     </NuxtLayout>
@@ -39,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { Report } from '~~/src/composables/types'
+import { DayReport } from '~~/src/composables/types'
 
 /// ////////////////////////////////////////
 // ダイアログ系
@@ -50,17 +30,7 @@ const openReportEditDialog = () => {
 }
 
 /// ////////////////////////////////////////
-// メニュー系
 
-const reportMenuRef = ref()
-const selectedReport = ref<Report>()
-const openCardMenu = (event: MouseEvent, report: Report) => {
-  selectedReport.value = report
-  reportMenuRef.value?.toggle(event)
-}
-/// ////////////////////////////////////////
-
-type DayReport = { date?: Date, reports: Report[] }[]
 const dayReports = ref<DayReport>([
   {
     date: new Date('2022-10-19 00:00:00'),

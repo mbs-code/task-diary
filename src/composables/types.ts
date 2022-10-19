@@ -13,3 +13,5 @@ export type Report = {
   endAt?: Date
   isStar: boolean
 }
+
+export type DayReport = { date?: Date, reports: Report[] }[]
