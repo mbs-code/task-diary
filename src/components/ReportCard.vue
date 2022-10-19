@@ -1,7 +1,7 @@
 <template>
-  <div class="report-card-wrapper">
+  <div class="report-card-wrapper" :class="{ 'has-star': report.isStar }">
     <!-- カード本体 -->
-    <Card class="report-card" :class="{ 'has-star': report.isStar }">
+    <Card class="report-card">
       <!-- カードヘッダ -->
       <template #title>
         <Avatar
@@ -51,7 +51,7 @@
 
         <template v-else>
           <div
-            class="whitespace-pre-wrap break-words min-h-4"
+            class="whitespace-pre-wrap break-words min-h-2rem"
             @dblclick="switchEditMode"
           >
             {{ report.text }}
@@ -129,17 +129,22 @@ const onSave = () => {
 .report-card-wrapper {
   position: relative;
 
-  .report-card {
-    margin-left: 3rem;
-
-    &.has-star {
+  &.has-star {
+    .report-card {
       border: solid 3px var(--yellow-700);
     }
+    .p-card-body {
+      padding: calc(1.5rem - 3px); // 囲い分引く
+    }
+  }
+
+  .report-card {
+    margin-left: 3rem;
   }
 
   .report-card-time {
     position: absolute;
-    top: 1.6rem;
+    top: 1.65rem;
     left: 0;
     background-color: var(--surface-200);
   }
