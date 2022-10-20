@@ -1,73 +1,62 @@
 <template>
-  <div class="report-card-wrapper" :class="{ 'has-star': report.isStar }">
-    <!-- カード本体 -->
-    <Card class="report-card">
-      <!-- カードヘッダ -->
-      <template #title>
-        <Avatar
-          class="!w-6 !h-6"
-          :label="report.project.label"
-          :style="{ backgroundColor: report.project.color }"
+  <Card>
+    <!-- カードヘッダ -->
+    <template #title>
+      <Avatar
+        class="!w-6 !h-6"
+        :label="report.project.label"
+        :style="{ backgroundColor: report.project.color }"
+      />
+
+      <span>{{ report.project.name }}</span>
+
+      <div class="flex-grow" />
+
+      <template v-if="isEditMode">
+        <Button
+          icon="pi pi-save"
+          class="p-button-rounded"
+          @click="onSave"
         />
-
-        <span>{{ report.project.name }}</span>
-
-        <div class="flex-grow" />
-
-        <template v-if="isEditMode">
-          <Button
-            icon="pi pi-save"
-            class="p-button-rounded"
-            @click="onSave"
-          />
-          <Button
-            icon="pi pi-times"
-            class="p-button-plain p-button-rounded p-button-text"
-            @click="switchViewMode"
-          />
-        </template>
-
-        <template v-else>
-          <Button
-            icon="pi pi-ellipsis-v"
-            class="p-button-plain p-button-rounded p-button-text"
-            @click="openMenu"
-          />
-        </template>
+        <Button
+          icon="pi pi-times"
+          class="p-button-plain p-button-rounded p-button-text"
+          @click="switchViewMode"
+        />
       </template>
 
-      <!-- カードコンテンツ -->
-      <template #content>
-        <template v-if="isEditMode">
-          <Textarea
-            ref="textareaRef"
-            v-model="text"
-            class="w-full max-w-full min-w-full"
-            auto-resize
-            @keydown.esc.stop="switchViewMode"
-            @keydown.ctrl.s.stop="onSave"
-          />
-        </template>
-
-        <template v-else>
-          <div
-            class="whitespace-pre-wrap break-words min-h-2rem"
-            @dblclick="switchEditMode"
-          >
-            {{ report.text }}
-          </div>
-        </template>
+      <template v-else>
+        <Button
+          icon="pi pi-ellipsis-v"
+          class="p-button-plain p-button-rounded p-button-text"
+          @click="openMenu"
+        />
       </template>
-    </Card>
+    </template>
 
-    <!-- 時間要素 -->
-    <Chip class="report-card-time" :label="time" />
+    <!-- カードコンテンツ -->
+    <template #content>
+      <template v-if="isEditMode">
+        <Textarea
+          ref="textareaRef"
+          v-model="text"
+          class="w-full max-w-full min-w-full"
+          auto-resize
+          @keydown.esc.stop="switchViewMode"
+          @keydown.ctrl.s.stop="onSave"
+        />
+      </template>
 
-    <!-- ピン要素 -->
-    <div v-if="report.isStar" class="report-card-pin">
-      <i class="pi pi-star-fill" />
-    </div>
-  </div>
+      <template v-else>
+        <div
+          class="whitespace-pre-wrap break-words min-h-2rem"
+          @dblclick="switchEditMode"
+        >
+          {{ report.text }}
+        </div>
+      </template>
+    </template>
+  </Card>
 </template>
 
 <script setup lang="ts">
@@ -124,43 +113,3 @@ const onSave = () => {
   switchViewMode()
 }
 </script>
-
-<style lang="scss">
-.report-card-wrapper {
-  position: relative;
-
-  &.has-star {
-    .report-card {
-      border: solid 3px var(--yellow-700);
-    }
-    .p-card-body {
-      padding: calc(1.5rem - 3px); // 囲い分引く
-    }
-  }
-
-  .report-card {
-    margin-left: 3rem;
-  }
-
-  .report-card-time {
-    position: absolute;
-    top: 1.65rem;
-    left: 0;
-    background-color: var(--surface-200);
-  }
-
-  .report-card-pin {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 2rem;
-    height: 2rem;
-    color: white;
-    background-color: var(--yellow-700);
-    border-top-right-radius: 4px;
-    border-bottom-left-radius: 1rem;
-    padding-top: 0.2rem;
-    padding-left: 0.6rem;
-  }
-}
-</style>

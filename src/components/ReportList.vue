@@ -9,8 +9,8 @@
       <ReportListDate class="sticky top-0 h-full py-2" :date="dayReport.date" />
 
       <!-- レポートリスト -->
-      <div class="flex flex-col gap-4 py-2" style="width: 400px;">
-        <ReportCard
+      <div class="flex flex-col gap-4 py-2" style="width: 480px;">
+        <ReportPanel
           v-for="(report, __) of dayReport.reports"
           :key="`${_}-${__}`"
           :report="report"
