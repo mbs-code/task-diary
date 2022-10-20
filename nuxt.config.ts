@@ -42,6 +42,6 @@ export default defineNuxtConfig({
       sourcemap: !!process.env.TAURI_DEBUG,
     },
 
-    plugins: [eslint({ fix: true })],
+    plugins: [eslint({ fix: true, include: 'src/**/*.{js,ts,vue}' })],
   },
 })

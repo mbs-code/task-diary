@@ -19,12 +19,3 @@
   }
 }
 
-.p-card {
-  .p-card-title {
-    @apply flex items-center gap-2;
-  }
-
-  .p-card-content {
-    @apply !p-0;
-  }
-}

@@ -10,10 +10,11 @@
 
       <!-- レポートリスト -->
       <div class="flex flex-col gap-4 py-2" style="width: 480px;">
-        <ReportPanel
+        <ReportCard
           v-for="(report, __) of dayReport.reports"
           :key="`${_}-${__}`"
           :report="report"
+          accordion
           @open:menu="openCardMenu"
         />
         <!-- @saved="replaceReport" -->
@@ -25,8 +26,6 @@
 </template>
 
 <script setup lang="ts">
-import { format as dateFormat } from 'date-fns'
-import Textarea from 'primevue/textarea'
 import { DayReport, Report } from '~~/src/composables/types'
 
 const props = defineProps<{
