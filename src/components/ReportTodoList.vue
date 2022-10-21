@@ -1,32 +1,20 @@
 <template>
   <div class="flex flex-col gap-8">
-    <div
-      v-for="(dayReport, _) of dayReports"
-      :key="_"
-      class="flex gap-2"
-    >
-      <!-- 日付カラム -->
-      <ReportListDate class="sticky top-0 h-full py-2" :date="dayReport.date" />
-
-      <!-- レポートリスト -->
-      <div class="flex flex-col gap-4 py-2" style="width: 480px;">
-        <div
-          v-for="(report, __) of dayReport.reports"
-          :key="`${_}-${__}`"
-          class="flex gap-2"
-        >
-          <div>
-            <Chip class="sticky top-2 w-4rem h-2rem" :label="formatReportAt(report) " />
-          </div>
-
-          <ReportCard
-            class="flex-grow"
-            :report="report"
-            @open:menu="openCardMenu"
-          />
+    <!-- レポートリスト -->
+    <div class="flex flex-col" style="width: 480px;">
+      <template
+        v-for="(report, _) of reports"
+        :key="_"
+      >
+        <ReportCard
+          class="flex-grow"
+          :report="report"
+          accordion
+          tiny
+          @open:menu="openCardMenu"
+        />
         <!-- @saved="replaceReport" -->
-        </div>
-      </div>
+      </template>
     </div>
 
     <Menu ref="cardMenuRef" :model="menuItems" :popup="true" />
@@ -39,7 +27,7 @@ import { MenuItem } from 'primevue/menuitem'
 import { DayReport, Report } from '~~/src/composables/types'
 
 const props = defineProps<{
-  dayReports: DayReport,
+  reports: Report[],
 }>()
 
 // // eslint-disable-next-line func-call-spacing

@@ -11,7 +11,10 @@
         />
       </template>
 
-      <ReportList :day-reports="dayReports" />
+      <div class="flex">
+        <ReportList :day-reports="dayReports" />
+        <ReportTodoList :reports="dayReports.at(0).reports" />
+      </div>
 
       <ReportEditDialog v-model:visible="showReportEditDialog" />
     </NuxtLayout>
