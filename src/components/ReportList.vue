@@ -10,14 +10,24 @@
 
       <!-- レポートリスト -->
       <div class="flex flex-col gap-4 py-2" style="width: 480px;">
-        <ReportCard
+        <div
           v-for="(report, __) of dayReport.reports"
           :key="`${_}-${__}`"
-          :report="report"
-          accordion
-          @open:menu="openCardMenu"
-        />
+          class="flex gap-2"
+        >
+          <div>
+            <Chip class="sticky top-2 w-4rem h-2rem" :label="formatReportAt(report) " />
+          </div>
+
+          <ReportCard
+            class="flex-grow"
+            :report="report"
+            accordion
+            tiny
+            @open:menu="openCardMenu"
+          />
         <!-- @saved="replaceReport" -->
+        </div>
       </div>
     </div>
 
@@ -26,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import { format as dateFormat } from 'date-fns'
 import { DayReport, Report } from '~~/src/composables/types'
 
 const props = defineProps<{
@@ -37,6 +48,14 @@ const props = defineProps<{
 //   (e: 'open:menu', event: MouseEvent, report: Report),
 //   (e: 'saved', report: Report),
 // }>()
+
+/// ////////////////////////////////////////
+
+const formatReportAt = (report: Report) => {
+  return report.startAt
+    ? dateFormat(report.startAt, 'HH:mm')
+    : undefined
+}
 
 /// ////////////////////////////////////////
 // メニュー系

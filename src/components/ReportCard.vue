@@ -1,7 +1,11 @@
 <template>
   <div
-    class="report-card-wrapper is-tiny"
-    :class="{ 'has-star': report.isStar, 'is-shrink': isShrink }"
+    class="report-card-wrapper"
+    :class="{
+      'has-star': report.isStar,
+      'is-shrink': isShrink,
+      'is-tiny': tiny,
+    }"
   >
     <!-- カード本体 -->
     <Card class="report-card">
@@ -70,9 +74,6 @@
       </template>
     </Card>
 
-    <!-- 時間要素 -->
-    <Chip class="report-card-time" :label="time" />
-
     <!-- ピン要素 -->
     <div v-if="report.isStar" class="report-card-pin">
       <i class="pi pi-star-fill" />
@@ -81,13 +82,12 @@
 </template>
 
 <script setup lang="ts">
-import { format as dateFormat } from 'date-fns'
 import { Report } from '~~/src/composables/types'
 
 const props = defineProps<{
   report: Report,
   accordion?: boolean, // アコーディオンを使用する
-
+  tiny?: boolean, // 小さいモード
 }>()
 
 // eslint-disable-next-line func-call-spacing
@@ -95,14 +95,6 @@ const emit = defineEmits<{
   (e: 'open:menu', event: MouseEvent, report: Report),
   (e: 'saved', report: Report),
 }>()
-
-/// ////////////////////////////////////////
-
-const time = computed(() => {
-  return props.report.startAt
-    ? dateFormat(props.report.startAt, 'HH:mm')
-    : undefined
-})
 
 /// ////////////////////////////////////////
 // アコーディオン系
@@ -151,11 +143,23 @@ const onSave = () => {
 .report-card-wrapper {
   position: relative;
 
+  .p-card {
+    .p-card-title {
+      @apply flex items-center gap-2;
+      @apply m-0 pr-3;
+    }
+
+    .p-card-content {
+      @apply pb-0;
+    }
+  }
+
   // 星を付ける
   &.has-star {
     .report-card {
       border: solid 3px var(--yellow-700);
     }
+
     .p-card-body {
       padding: calc(1.5rem - 3px); // 囲い分引く
     }
@@ -168,27 +172,28 @@ const onSave = () => {
     }
   }
 
-  .report-card {
-    margin-left: 3rem;
-
+  // 小さいモード
+  &.is-tiny {
     .p-card-title {
-      @apply flex items-center gap-2;
-      @apply m-0 pr-3;
+      font-size: 1.0rem;
+      button {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
     }
 
-    .p-card-content {
-      @apply pb-0;
+    .p-card-body {
+      padding: calc(1rem - 3px); // 囲い分引く
     }
+
+    // &.has-star {
+    //   .p-card-body {
+    //     padding: calc(1rem - 3px); // 囲い分引く
+    //   }
+    // }
   }
 
   ///
-
-  .report-card-time {
-    position: absolute;
-    top: 1.65rem;
-    left: 0;
-    background-color: var(--surface-200);
-  }
 
   .report-card-pin {
     position: absolute;
