@@ -1,5 +1,5 @@
 import { Dayjs } from 'dayjs'
-import { useDayjs } from "~~/src/composables/useDayjs"
+import { useDayjs } from '~~/src/composables/useDayjs'
 
 export type DBStatus = {
   id: number
@@ -21,8 +21,6 @@ export type FormStatus = {
   name: string
   color?: string
 }
-
-const dayjs = useDayjs()
 
 export const formatStatus = (db: DBStatus): Status => {
   const dayjs = useDayjs()

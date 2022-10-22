@@ -9,6 +9,7 @@
 
 <script setup lang="ts">
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
+import { StatusAPI } from '~~/src/apis/StatusAPI'
 import { Database } from '~~/src/databases/Database'
 
 onMounted(async () => {
@@ -40,5 +41,24 @@ onMounted(async () => {
     limit: 2,
   })
   console.log(projects)
+
+  const s1 = await StatusAPI.create({
+    name: '重要',
+    color: '#dc3545',
+  })
+  const s2 = await StatusAPI.create({
+    name: '待ち',
+    color: '#8dd0ff',
+  })
+  const s3 = await StatusAPI.create({
+    name: '保留',
+    color: '#fec89a',
+  })
+  const statuses = await StatusAPI.getAll({
+    sorts: [['created_at', 'desc']],
+    page: 2,
+    limit: 2,
+  })
+  console.log(statuses)
 })
 </script>
