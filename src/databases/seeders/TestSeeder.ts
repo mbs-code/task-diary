@@ -1,4 +1,4 @@
-// eslint-disable @typescript-eslint/no-unused-vars
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { StatusAPI } from '~~/src/apis/StatusAPI'
