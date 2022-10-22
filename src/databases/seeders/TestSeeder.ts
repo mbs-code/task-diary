@@ -1,4 +1,4 @@
-// eslint-disablee @typescript-eslint/no-unused-vars
+// eslint-disable @typescript-eslint/no-unused-vars
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { StatusAPI } from '~~/src/apis/StatusAPI'
@@ -27,6 +27,10 @@ export const testSeeder = async () => {
 
   const p4 = await ProjectAPI.create({
     name: 'Tips',
+  })
+
+  const p5 = await ProjectAPI.create({
+    name: 'Sample',
   })
 
   /// ////////////////////////////////////////
@@ -91,4 +95,17 @@ export const testSeeder = async () => {
     statusId: s2.id,
     isFavotite: true,
   })
+
+  // 一日5件くらい適当に
+  let base = dayjs('2022-10-01')
+  for (let i = 0; i < 20; i++) {
+    await ReportAPI.create({
+      text: base.format('YYYY-MM-dd HH:mm:ss のメモ'),
+      projectId: p5.id,
+      isFavotite: true,
+      startAt: base.clone(),
+    })
+
+    base = base.add(8, 'hours')
+  }
 }

@@ -33,7 +33,7 @@ export class StatusAPI {
   }
 
   public static async getAll (search?: SearchStatus): Promise<Status[]> {
-    const { query } = this.getSearchQuery()
+    const { query } = this.getSearchQuery(search)
 
     // 取得
     const dbStatuses = await query

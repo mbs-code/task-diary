@@ -6,6 +6,8 @@ import { DBReport, formatReport, FormReport, parseReport, Report } from '~~/src/
 
 export type SearchReport = {
   text?: string
+  onlyTask?: boolean // タスク要素
+  onlyTodo?: boolean // TO-DO要素
   in?: number[] // id配列で取得
   page?: number
   limit?: number
@@ -19,6 +21,8 @@ export class ReportAPI {
     const query = db
       .selectFrom('reports')
       .if(Boolean(search?.text), qb => qb.where('text', 'like', `%${search.text}%`))
+      .if(Boolean(search?.onlyTask), qb => qb.where('start_at', 'is not', null))
+      .if(Boolean(search?.onlyTodo), qb => qb.where('start_at', 'is', null))
       .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
 
     // NOTE: page limit sorts など、countに影響しないものは実装しない
@@ -35,7 +39,7 @@ export class ReportAPI {
   }
 
   public static async getAll (search?: SearchReport): Promise<Report[]> {
-    const { query } = this.getSearchQuery()
+    const { query } = this.getSearchQuery(search)
 
     // 取得
     const dbReports = await query

@@ -33,7 +33,7 @@ export class ProjectAPI {
   }
 
   public static async getAll (search?: SearchProject): Promise<Project[]> {
-    const { query } = this.getSearchQuery()
+    const { query } = this.getSearchQuery(search)
 
     // 取得
     const dbProjects = await query
