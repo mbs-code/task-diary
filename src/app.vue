@@ -1,11 +1,5 @@
 <template>
-  <div class="p-8">
-    <Button>
-      asd
-    </Button>
-
-    <pre>{{ reports }}</pre>
-  </div>
+  <NuxtPage />
 </template>
 
 <script setup lang="ts">

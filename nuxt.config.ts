@@ -6,6 +6,13 @@ export default defineNuxtConfig({
   srcDir: 'src/',
   ssr: false,
 
+  css: [
+    'primevue/resources/themes/bootstrap4-dark-blue/theme.css',
+    'primevue/resources/primevue.css',
+    'primeicons/primeicons.css',
+    '@/assets/index.scss',
+  ],
+
   app: {
     head: {
       script: [
@@ -13,6 +20,11 @@ export default defineNuxtConfig({
       ],
     },
   },
+
+  components: [{
+    path: '~/components',
+    pathPrefix: false,
+  }],
 
   vite: {
     clearScreen: false,
@@ -26,7 +38,9 @@ export default defineNuxtConfig({
       sourcemap: !!process.env.TAURI_DEBUG,
     },
 
-    plugins: [eslint({ fix: true })],
+    plugins: [
+      eslint({ fix: true, include: 'src/**/*.{js,ts,vue}' }),
+    ],
   },
 
   modules: [

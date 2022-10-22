@@ -41,7 +41,7 @@ export class ProjectAPI {
       .if(Boolean(search?.page) && Boolean(search.limit), qb => qb.offset((search.page - 1) * search.limit))
       .if(Boolean(search?.limit), qb => qb.limit(search.limit))
       .if(Boolean(search?.sorts), qb => search.sorts.reduce(
-        (qb2, sort) => qb2.orderBy(sort[0], sort[1]), qb)
+        (qb2, sort) => qb2.orderBy(sort[0], sort[1]), qb),
       )
       .execute()
 

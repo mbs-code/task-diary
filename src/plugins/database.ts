@@ -12,12 +12,12 @@ export default defineNuxtPlugin((nuxtApp) => {
     dialect: new TauriSqliteDialect({
       path,
       debug: false,
-    })
+    }),
   })
 
   const migrator = new Migrator({
     db,
-    provider: new BuildinMigrationProvider(migrations)
+    provider: new BuildinMigrationProvider(migrations),
   })
 
   nuxtApp.provide('db', db)

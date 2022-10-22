@@ -1,7 +1,7 @@
 /* eslint-disable import/named */
 import {
   Migration,
-  MigrationProvider
+  MigrationProvider,
 } from 'kysely'
 
 export class BuildinMigrationProvider implements MigrationProvider {
