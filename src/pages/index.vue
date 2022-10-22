@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtLayout>
+    <NuxtLayout name="default">
       <template #header>
         <div>Task Diary</div>
         <div class="flex-grow" name="padding" />
@@ -19,7 +19,9 @@
       </template>
 
       <div class="flex">
-        <ReportTimeline />
+        <div class="overflow-y-scroll" style="height: calc(100vh - 40px)">
+          <ReportTimeline class="p-4" />
+        </div>
         <!-- <ReportList :day-reports="dayReports" />
         <ReportTodoList :reports="dayReports.at(0).reports" /> -->
       </div>

@@ -27,6 +27,7 @@ export const testSeeder = async () => {
 
   const p4 = await ProjectAPI.create({
     name: 'Tips',
+    icon: '😎',
   })
 
   const p5 = await ProjectAPI.create({

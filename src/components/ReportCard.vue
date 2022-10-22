@@ -2,7 +2,7 @@
   <div
     class="report-card-wrapper"
     :class="{
-      'has-star': report.isStar,
+      'has-star': report.isFavorite,
       'is-shrink': isShrink,
       'is-tiny': tiny,
     }"
@@ -20,7 +20,7 @@
 
         <Avatar
           class="!w-6 !h-6"
-          :label="report.project.label"
+          :label="report.project.icon"
           :style="{ backgroundColor: report.project.color }"
         />
 
@@ -75,14 +75,14 @@
     </Card>
 
     <!-- ピン要素 -->
-    <div v-if="report.isStar" class="report-card-pin">
+    <div v-if="report.isFavorite" class="report-card-pin">
       <i class="pi pi-star-fill" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Report } from '~~/src/composables/types'
+import { Report } from '~~/src/databases/models/Report'
 
 const props = defineProps<{
   report: Report,

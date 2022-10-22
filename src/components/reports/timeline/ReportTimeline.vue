@@ -5,26 +5,28 @@
       :key="_"
       class="flex gap-2"
     >
-      <div class="w-6rem">
+      <div class="min-w-4rem">
         <ReportTimelineDate class="sticky top-0 py-2" :dayjs="dayReport.date" />
       </div>
 
-      <div class="flex flex-col gap-4 py-2" style="width: 480px;">
-        <div
-          v-for="(report, __) of dayReport.reports"
-          :key="`${_}-${__}`"
-          class="flex gap-2"
-        >
-          <div class="w-4rem">
-            <ReportTimelineTime class="sticky top-2" :dayjs="report.startAt" />
-          </div>
+      <div class="flex-grow">
+        <div class="flex flex-col gap-4 py-2">
+          <div
+            v-for="(report, __) of dayReport.reports"
+            :key="`${_}-${__}`"
+            class="flex gap-2"
+          >
+            <div class="min-w-4rem">
+              <ReportTimelineTime class="sticky top-2" :dayjs="report.startAt" />
+            </div>
 
-          <ReportCard
-            class="flex-grow"
-            :report="report"
-          />
+            <ReportCard
+              class="flex-grow"
+              :report="report"
+            />
           <!-- @open:menu="openCardMenu" -->
           <!-- @saved="replaceReport" -->
+          </div>
         </div>
       </div>
     </div>

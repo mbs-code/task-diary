@@ -8,12 +8,12 @@
       <slot name="header" />
     </div>
 
-    <div
+    <!-- <div
       class="flex-grow overflow-y-scroll overflow-x-auto p-2"
       :style="{ background: 'var(--surface-ground)' }"
-    >
-      <slot />
-    </div>
+    > -->
+    <slot />
+    <!-- </div> -->
   </div>
 </template>
 
