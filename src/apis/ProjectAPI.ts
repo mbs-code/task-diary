@@ -1,5 +1,5 @@
+import { useDatabase } from '~~/src/composables/useDatabase'
 import { useDayjs } from '~~/src/composables/useDayjs'
-import { Database } from '~~/src/databases/Database'
 import { DBProject, formatProject, FormProject, parseProject, Project } from '~~/src/databases/models/Project'
 
 export type SearchProject = {
@@ -12,8 +12,9 @@ export type SearchProject = {
 
 export class ProjectAPI {
   protected static getSearchQuery (search?: SearchProject) {
-    const db = Database.getDB()
-    const query = Database.getDB()
+    const { db } = useDatabase()
+
+    const query = db
       .selectFrom('projects')
       .if(Boolean(search?.text), qb => qb.where('name', 'like', `%${search.text}%`))
       .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
@@ -50,8 +51,10 @@ export class ProjectAPI {
   /// ////////////////////////////////////////
 
   public static async get (projectId: number): Promise<Project> {
+    const { db } = useDatabase()
+
     // 取得
-    const dbProject = await Database.getDB()
+    const dbProject = await db
       .selectFrom('projects')
       .selectAll()
       .where('id', '=', projectId)
@@ -61,7 +64,7 @@ export class ProjectAPI {
   }
 
   public static async create (form: FormProject): Promise<Project> {
-    const db = Database.getDB()
+    const { db } = useDatabase()
     const dayjs = useDayjs()
 
     const now = dayjs()
@@ -89,7 +92,7 @@ export class ProjectAPI {
   }
 
   public static async update (projectId: number, form: FormProject): Promise<Project> {
-    const db = Database.getDB()
+    const { db } = useDatabase()
     const dayjs = useDayjs()
 
     const now = dayjs()
@@ -122,7 +125,7 @@ export class ProjectAPI {
   }
 
   public static async remove (projectId: number): Promise<boolean> {
-    const db = Database.getDB()
+    const { db } = useDatabase()
 
     // FKで使われているか確認する
     const project = await this.get(projectId)

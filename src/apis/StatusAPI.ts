@@ -1,5 +1,5 @@
+import { useDatabase } from '~~/src/composables/useDatabase'
 import { useDayjs } from '~~/src/composables/useDayjs'
-import { Database } from '~~/src/databases/Database'
 import { DBStatus, formatStatus, FormStatus, parseStatus, Status } from '~~/src/databases/models/Status'
 
 export type SearchStatus = {
@@ -12,8 +12,9 @@ export type SearchStatus = {
 
 export class StatusAPI {
   protected static getSearchQuery (search?: SearchStatus) {
-    const db = Database.getDB()
-    const query = Database.getDB()
+    const { db } = useDatabase()
+
+    const query = db
       .selectFrom('statuses')
       .if(Boolean(search?.text), qb => qb.where('name', 'like', `%${search.text}%`))
       .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
@@ -50,8 +51,10 @@ export class StatusAPI {
   /// ////////////////////////////////////////
 
   public static async get (statusId: number): Promise<Status> {
+    const { db } = useDatabase()
+
     // 取得
-    const dbTag = await Database.getDB()
+    const dbTag = await db
       .selectFrom('statuses')
       .selectAll()
       .where('id', '=', statusId)
@@ -61,7 +64,7 @@ export class StatusAPI {
   }
 
   public static async create (form: FormStatus): Promise<Status> {
-    const db = Database.getDB()
+    const { db } = useDatabase()
     const dayjs = useDayjs()
 
     const now = dayjs()
@@ -89,7 +92,7 @@ export class StatusAPI {
   }
 
   public static async update (statusId: number, form: FormStatus): Promise<Status> {
-    const db = Database.getDB()
+    const { db } = useDatabase()
     const dayjs = useDayjs()
 
     const now = dayjs()
@@ -122,7 +125,7 @@ export class StatusAPI {
   }
 
   public static async remove (statusId: number): Promise<boolean> {
-    const db = Database.getDB()
+    const { db } = useDatabase()
 
     // FKで使われているか確認する
     const status = await this.get(statusId)

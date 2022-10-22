@@ -1,7 +1,7 @@
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
 import { StatusAPI } from '~~/src/apis/StatusAPI'
+import { useDatabase } from '~~/src/composables/useDatabase'
 import { useDayjs } from '~~/src/composables/useDayjs'
-import { Database } from '~~/src/databases/Database'
 import { DBReport, formatReport, FormReport, parseReport, Report } from '~~/src/databases/models/Report'
 
 export type SearchReport = {
@@ -14,8 +14,9 @@ export type SearchReport = {
 
 export class ReportAPI {
   protected static getSearchQuery (search?: SearchReport) {
-    const db = Database.getDB()
-    const query = Database.getDB()
+    const { db } = useDatabase()
+
+    const query = db
       .selectFrom('reports')
       .if(Boolean(search?.text), qb => qb.where('text', 'like', `%${search.text}%`))
       .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
@@ -73,8 +74,10 @@ export class ReportAPI {
   /// ////////////////////////////////////////
 
   public static async get (reportId: number): Promise<Report> {
+    const { db } = useDatabase()
+
     // 取得
-    const dbReport = await Database.getDB()
+    const dbReport = await db
       .selectFrom('reports')
       .selectAll()
       .where('id', '=', reportId)
@@ -95,7 +98,7 @@ export class ReportAPI {
   }
 
   public static async create (form: FormReport): Promise<Report> {
-    const db = Database.getDB()
+    const { db } = useDatabase()
     const dayjs = useDayjs()
 
     const now = dayjs()
@@ -115,7 +118,7 @@ export class ReportAPI {
   }
 
   public static async update (reportId: number, form: FormReport): Promise<Report> {
-    const db = Database.getDB()
+    const { db } = useDatabase()
     const dayjs = useDayjs()
 
     const now = dayjs()
@@ -139,7 +142,7 @@ export class ReportAPI {
   }
 
   public static async remove (reportId: number): Promise<boolean> {
-    const db = Database.getDB()
+    const { db } = useDatabase()
 
     // 削除
     const { numDeletedRows } = await db

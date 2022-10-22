@@ -11,13 +11,11 @@
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { StatusAPI } from '~~/src/apis/StatusAPI'
-import { Database } from '~~/src/databases/Database'
 
 onMounted(async () => {
   console.log('init')
-  const { migrator } = Database.getInstance()
-  await Database.dbWipe()
-  await migrator.migrateToLatest()
+  const database = useDatabase()
+  await database.dbWipe()
 
   const dayjs = useDayjs()
 

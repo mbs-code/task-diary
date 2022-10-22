@@ -8,5 +8,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   dayjs.extend(timezone)
   dayjs.tz.setDefault('Asia/Tokyo')
   dayjs.locale('ja')
+
   nuxtApp.provide('dayjs', dayjs)
 })
