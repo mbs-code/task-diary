@@ -3,15 +3,36 @@ import { Database } from '~~/src/databases/Database'
 import { DBStatus, formatStatus, FormStatus, parseStatus, Status } from '~~/src/databases/models/Status'
 
 export type SearchStatus = {
+  text?: string
   page?: number
   limit?: number
   sorts?: [keyof DBStatus, 'asc' | 'desc'][]
 }
 
 export class StatusAPI {
-  public static async getAll (search?: SearchStatus): Promise<Status[]> {
-    const statuses = await Database.getDB()
+  protected static getSearchQuery (search?: SearchStatus) {
+    const db = Database.getDB()
+    const query = Database.getDB()
       .selectFrom('statuses')
+      .if(Boolean(search?.text), qb => qb.where('name', 'like', `%${search.text}%`))
+
+    // NOTE: page limit sorts など、countに影響しないものは実装しない
+    return { db, query }
+  }
+
+  public static async count (search?: SearchStatus) {
+    const { db, query } = this.getSearchQuery(search)
+    const { count } = await query
+      .select([db.fn.count('id').as('count')])
+      .executeTakeFirst()
+
+    return Number(count)
+  }
+
+  public static async getAll (search?: SearchStatus): Promise<Status[]> {
+    const { query } = this.getSearchQuery()
+
+    const statuses = await query
       .selectAll()
       .if(Boolean(search?.page) && Boolean(search.limit), qb => qb.offset((search.page - 1) * search.limit))
       .if(Boolean(search?.limit), qb => qb.limit(search.limit))
@@ -32,6 +53,8 @@ export class StatusAPI {
 
     return formatStatus(tag)
   }
+
+  /// ////////////////////////////////////////
 
   public static async create (form: FormStatus): Promise<Status> {
     const db = Database.getDB()

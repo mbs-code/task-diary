@@ -60,5 +60,10 @@ onMounted(async () => {
     limit: 2,
   })
   console.log(statuses)
+  console.log(await StatusAPI.count({
+    sorts: [['created_at', 'desc']],
+    page: 2,
+    limit: 2,
+  }))
 })
 </script>

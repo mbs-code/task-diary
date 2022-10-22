@@ -3,15 +3,36 @@ import { Database } from '~~/src/databases/Database'
 import { DBProject, formatProject, FormProject, parseProject, Project } from '~~/src/databases/models/Project'
 
 export type SearchProject = {
+  text?: string
   page?: number
   limit?: number
   sorts?: [keyof DBProject, 'asc' | 'desc'][]
 }
 
 export class ProjectAPI {
-  public static async getAll (search?: SearchProject): Promise<Project[]> {
-    const projects = await Database.getDB()
+  protected static getSearchQuery (search?: SearchProject) {
+    const db = Database.getDB()
+    const query = Database.getDB()
       .selectFrom('projects')
+      .if(Boolean(search?.text), qb => qb.where('name', 'like', `%${search.text}%`))
+
+    // NOTE: page limit sorts など、countに影響しないものは実装しない
+    return { db, query }
+  }
+
+  public static async count (search?: SearchProject) {
+    const { db, query } = this.getSearchQuery(search)
+    const { count } = await query
+      .select([db.fn.count('id').as('count')])
+      .executeTakeFirst()
+
+    return Number(count)
+  }
+
+  public static async getAll (search?: SearchProject): Promise<Project[]> {
+    const { query } = this.getSearchQuery()
+
+    const projects = await query
       .selectAll()
       .if(Boolean(search?.page) && Boolean(search.limit), qb => qb.offset((search.page - 1) * search.limit))
       .if(Boolean(search?.limit), qb => qb.limit(search.limit))
