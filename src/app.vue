@@ -9,6 +9,7 @@
 
 <script setup lang="ts">
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
+import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { StatusAPI } from '~~/src/apis/StatusAPI'
 import { Database } from '~~/src/databases/Database'
 
@@ -17,6 +18,8 @@ onMounted(async () => {
   const { migrator } = Database.getInstance()
   await Database.dbWipe()
   await migrator.migrateToLatest()
+
+  const dayjs = useDayjs()
 
   const p1 = await ProjectAPI.create({
     name: '案件A',
@@ -60,10 +63,20 @@ onMounted(async () => {
     limit: 2,
   })
   console.log(statuses)
-  console.log(await StatusAPI.count({
+
+  const r1 = await ReportAPI.create({
+    text: '本文',
+    projectId: p1.id,
+    statusId: s1.id,
+    isFavotite: true,
+    startAt: dayjs('2022-10-20 10:01:00'),
+  })
+
+  const reports = await ReportAPI.getAll({
     sorts: [['created_at', 'desc']],
-    page: 2,
+    page: 1,
     limit: 2,
-  }))
+  })
+  console.log(reports)
 })
 </script>

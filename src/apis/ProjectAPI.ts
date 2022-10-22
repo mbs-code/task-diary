@@ -4,6 +4,7 @@ import { DBProject, formatProject, FormProject, parseProject, Project } from '~~
 
 export type SearchProject = {
   text?: string
+  in?: number[] // id配列で取得
   page?: number
   limit?: number
   sorts?: [keyof DBProject, 'asc' | 'desc'][]
@@ -15,6 +16,7 @@ export class ProjectAPI {
     const query = Database.getDB()
       .selectFrom('projects')
       .if(Boolean(search?.text), qb => qb.where('name', 'like', `%${search.text}%`))
+      .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
 
     // NOTE: page limit sorts など、countに影響しないものは実装しない
     return { db, query }
@@ -32,7 +34,8 @@ export class ProjectAPI {
   public static async getAll (search?: SearchProject): Promise<Project[]> {
     const { query } = this.getSearchQuery()
 
-    const projects = await query
+    // 取得
+    const dbProjects = await query
       .selectAll()
       .if(Boolean(search?.page) && Boolean(search.limit), qb => qb.offset((search.page - 1) * search.limit))
       .if(Boolean(search?.limit), qb => qb.limit(search.limit))
@@ -41,17 +44,20 @@ export class ProjectAPI {
       )
       .execute()
 
-    return projects.map(pj => formatProject(pj))
+    return dbProjects.map(pj => formatProject(pj))
   }
 
+  /// ////////////////////////////////////////
+
   public static async get (projectId: number): Promise<Project> {
-    const tag = await Database.getDB()
+    // 取得
+    const dbProject = await Database.getDB()
       .selectFrom('projects')
       .selectAll()
       .where('id', '=', projectId)
       .executeTakeFirstOrThrow()
 
-    return formatProject(tag)
+    return formatProject(dbProject)
   }
 
   public static async create (form: FormProject): Promise<Project> {
@@ -102,7 +108,7 @@ export class ProjectAPI {
     const { numUpdatedRows } = await db
       .updateTable('projects')
       .set({
-        ...parseProject(form),
+        ...parse,
         updated_at: now.toISOString(),
       })
       .where('id', '=', projectId)
@@ -118,10 +124,8 @@ export class ProjectAPI {
   public static async remove (projectId: number): Promise<boolean> {
     const db = Database.getDB()
 
-    // 取ってくる
-    const project = await this.get(projectId)
-
     // FKで使われているか確認する
+    const project = await this.get(projectId)
     const { count } = await db
       .selectFrom('reports')
       .select([db.fn.count('id').as('count')])

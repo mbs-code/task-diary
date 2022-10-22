@@ -1,5 +1,7 @@
 import { Dayjs } from 'dayjs'
-import { useDayjs } from "~~/src/composables/useDayjs"
+import { useDayjs } from '~~/src/composables/useDayjs'
+import { Project } from '~~/src/databases/models/Project'
+import { Status } from '~~/src/databases/models/Status'
 
 export type DBReport = {
   id: number
@@ -23,6 +25,9 @@ export type Report = {
   endAt?: Dayjs
   createdAt: Dayjs
   updatedAt: Dayjs
+
+  project?: Project // relation
+  status?: Status // relation
 }
 
 export type FormReport = {
@@ -65,8 +70,8 @@ export const parseReport = (form: FormReport): Partial<DBReport> => {
     start_at: form.startAt
       ? dayjs(form.startAt).toISOString()
       : null,
-    end_at: form.startAt
-      ? dayjs(form.startAt).toISOString()
+    end_at: form.endAt
+      ? dayjs(form.endAt).toISOString()
       : null,
   }
 }

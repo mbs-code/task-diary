@@ -4,6 +4,7 @@ import { DBStatus, formatStatus, FormStatus, parseStatus, Status } from '~~/src/
 
 export type SearchStatus = {
   text?: string
+  in?: number[] // id配列で取得
   page?: number
   limit?: number
   sorts?: [keyof DBStatus, 'asc' | 'desc'][]
@@ -15,6 +16,7 @@ export class StatusAPI {
     const query = Database.getDB()
       .selectFrom('statuses')
       .if(Boolean(search?.text), qb => qb.where('name', 'like', `%${search.text}%`))
+      .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
 
     // NOTE: page limit sorts など、countに影響しないものは実装しない
     return { db, query }
@@ -32,7 +34,8 @@ export class StatusAPI {
   public static async getAll (search?: SearchStatus): Promise<Status[]> {
     const { query } = this.getSearchQuery()
 
-    const statuses = await query
+    // 取得
+    const dbStatuses = await query
       .selectAll()
       .if(Boolean(search?.page) && Boolean(search.limit), qb => qb.offset((search.page - 1) * search.limit))
       .if(Boolean(search?.limit), qb => qb.limit(search.limit))
@@ -41,20 +44,21 @@ export class StatusAPI {
       )
       .execute()
 
-    return statuses.map(pj => formatStatus(pj))
+    return dbStatuses.map(pj => formatStatus(pj))
   }
 
+  /// ////////////////////////////////////////
+
   public static async get (statusId: number): Promise<Status> {
-    const tag = await Database.getDB()
+    // 取得
+    const dbTag = await Database.getDB()
       .selectFrom('statuses')
       .selectAll()
       .where('id', '=', statusId)
       .executeTakeFirstOrThrow()
 
-    return formatStatus(tag)
+    return formatStatus(dbTag)
   }
-
-  /// ////////////////////////////////////////
 
   public static async create (form: FormStatus): Promise<Status> {
     const db = Database.getDB()
@@ -104,7 +108,7 @@ export class StatusAPI {
     const { numUpdatedRows } = await db
       .updateTable('statuses')
       .set({
-        ...parseStatus(form),
+        ...parse,
         updated_at: now.toISOString(),
       })
       .where('id', '=', statusId)
@@ -120,10 +124,8 @@ export class StatusAPI {
   public static async remove (statusId: number): Promise<boolean> {
     const db = Database.getDB()
 
-    // 取ってくる
-    const status = await this.get(statusId)
-
     // FKで使われているか確認する
+    const status = await this.get(statusId)
     const { count } = await db
       .selectFrom('reports')
       .select([db.fn.count('id').as('count')])
