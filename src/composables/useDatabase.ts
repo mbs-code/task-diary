@@ -1,5 +1,6 @@
 /* eslint-disable import/named */
 import { Kysely, Migrator } from 'kysely'
+import { testSeeder } from '~~/src/databases/seeders/TestSeeder'
 import { Tables } from '~~/src/databases/Tables'
 
 export const useDatabase = () => {
@@ -26,10 +27,17 @@ export const useDatabase = () => {
     await migrator.migrateToLatest()
   }
 
+  const testSeed = async () => {
+    // DBを消してシーダーを流す
+    await dbWipe()
+    await testSeeder()
+  }
+
   return {
     db,
     migrator,
     migrateToLatest,
     dbWipe,
+    testSeed,
   }
 }
