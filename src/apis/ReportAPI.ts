@@ -92,10 +92,10 @@ export class ReportAPI {
     // リレーション紐づけ
     return {
       ...report,
-      project: report.project
+      project: report.projectId
         ? await ProjectAPI.get(report.projectId)
         : undefined,
-      status: report.status
+      status: report.statusId
         ? await StatusAPI.get(report.statusId)
         : undefined,
     }
