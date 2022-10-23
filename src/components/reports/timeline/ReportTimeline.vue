@@ -104,6 +104,21 @@ const appendDayReport = (report: Report) => {
   }
 }
 
+const removeDayReport = (report: Report) => {
+  // 日付で探索する
+  const baseDate = report?.startAt.clone().startOf('date')
+  const targetDay = dayReports.value.find(dr => dr.date.isSame(baseDate, 'date'))
+
+  if (targetDay) {
+    // 日付が作成済みなら
+    const ownIdIdx = targetDay.reports.findIndex(r => r.id === report.id)
+    if (ownIdIdx >= 0) {
+      // 自身のIDがある場合削除
+      targetDay.reports.splice(ownIdIdx, 1)
+    }
+  }
+}
+
 /// ////////////////////////////////////////
 // メニュー系
 
@@ -118,6 +133,22 @@ const onToggleStar = async () => {
   selectedReport.value.isStar = !selectedReport.value.isStar
   const updReport = await ReportAPI.update(selectedReport.value.id, selectedReport.value)
   appendDayReport(updReport)
+}
+
+const confirm = useConfirm()
+const onDelete = () => {
+  const text = selectedReport.value.text.slice(0, 20).replace(/\r?\n/g, ' ')
+  confirm.require({
+    // eslint-disable-next-line no-irregular-whitespace
+    message: `「${text}...」\n　のレポートを削除しますか？`,
+    header: '削除の確認',
+    icon: 'pi pi-info-circle',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      await ReportAPI.remove(selectedReport.value.id)
+      removeDayReport(selectedReport.value)
+    },
+  })
 }
 
 const menuItems = computed<MenuItem[]>(() => {
@@ -143,9 +174,7 @@ const menuItems = computed<MenuItem[]>(() => {
         label: '削除',
         icon: 'pi pi-trash',
         class: 'menu-delete',
-        command: () => {
-          window.alert('delet')
-        },
+        command: onDelete,
       },
     ]
   }
@@ -159,6 +188,13 @@ const menuItems = computed<MenuItem[]>(() => {
   .p-menuitem-icon,
   .p-menuitem-text {
     color: var(--red-500) !important;
+  }
+}
+
+.p-confirm-dialog {
+  .p-confirm-dialog-message {
+    white-space: pre;
+    line-break: anywhere;
   }
 }
 </style>

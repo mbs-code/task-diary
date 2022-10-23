@@ -14,6 +14,8 @@
     > -->
     <slot />
     <!-- </div> -->
+
+    <ConfirmDialog />
   </div>
 </template>
 

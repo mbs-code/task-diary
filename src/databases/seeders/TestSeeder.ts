@@ -103,7 +103,7 @@ export const testSeeder = async () => {
     await ReportAPI.create({
       text: base.format('YYYY-MM-dd HH:mm:ss のメモ'),
       projectId: p5.id,
-      isStar: true,
+      isStar: false,
       startAt: base.clone(),
     })
 
