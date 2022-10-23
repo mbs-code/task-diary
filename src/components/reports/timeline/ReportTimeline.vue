@@ -24,8 +24,8 @@
               class="flex-grow"
               :report="report"
               @open:menu="openCardMenu"
+              @update:text="onUpdateText"
             />
-          <!-- @saved="replaceReport" -->
           </div>
         </div>
       </div>
@@ -36,9 +36,6 @@
 </template>
 
 <script setup lang="ts">
-// import { MenuItem } from 'primevue/menuitem'
-// import { DayReport, Report } from '~~/src/composables/types'
-
 import { Dayjs } from 'dayjs'
 import { MenuItem } from 'primevue/menuitem'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
@@ -129,9 +126,25 @@ const openCardMenu = (event: MouseEvent, report: Report) => {
   cardMenuRef.value?.toggle(event)
 }
 
+const onUpdateText = async (text: string, report: Report, onDone: () => void) => {
+  const form = {
+    ...report,
+    text,
+  }
+  const updReport = await ReportAPI.update(report.id, form)
+  appendDayReport(updReport)
+
+  onDone()
+}
+
+///
+
 const onToggleStar = async () => {
-  selectedReport.value.isStar = !selectedReport.value.isStar
-  const updReport = await ReportAPI.update(selectedReport.value.id, selectedReport.value)
+  const form = {
+    ...selectedReport.value,
+    isStar: !selectedReport.value.isStar,
+  }
+  const updReport = await ReportAPI.update(selectedReport.value.id, form)
   appendDayReport(updReport)
 }
 

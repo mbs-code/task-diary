@@ -93,7 +93,7 @@ const props = defineProps<{
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
   (e: 'open:menu', event: MouseEvent, report: Report),
-  (e: 'saved', report: Report),
+  (e: 'update:text', text: string, report: Report, onDone: () => void),
 }>()
 
 /// ////////////////////////////////////////
@@ -131,11 +131,8 @@ const switchViewMode = () => {
 }
 
 const onSave = () => {
-  const report = { ...props.report }
-  report.text = (text.value ?? '').trim()
-  emit('saved', report)
-
-  switchViewMode()
+  const newText = (text.value ?? '').trim()
+  emit('update:text', newText, props.report, switchViewMode)
 }
 </script>
 
