@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col gap-8">
     <div
-      v-for="(dayReport, _) of dayReports"
-      :key="_"
+      v-for="dayReport of dayReports"
+      :key="dayReport.key"
       class="flex gap-2"
     >
       <div class="min-w-4rem">
@@ -12,8 +12,8 @@
       <div class="flex-grow">
         <div class="flex flex-col gap-4 py-2">
           <div
-            v-for="(report, __) of dayReport.reports"
-            :key="`${_}-${__}`"
+            v-for="report of dayReport.reports"
+            :key="report.id"
             class="flex gap-2"
           >
             <div class="min-w-4rem">
@@ -23,15 +23,15 @@
             <ReportCard
               class="flex-grow"
               :report="report"
+              @open:menu="openCardMenu"
             />
-          <!-- @open:menu="openCardMenu" -->
           <!-- @saved="replaceReport" -->
           </div>
         </div>
       </div>
     </div>
 
-    <!-- <Menu ref="cardMenuRef" :model="menuItems" :popup="true" /> -->
+    <Menu ref="cardMenuRef" :model="menuItems" :popup="true" />
   </div>
 </template>
 
@@ -40,27 +40,24 @@
 // import { DayReport, Report } from '~~/src/composables/types'
 
 import { Dayjs } from 'dayjs'
-import { ReportAPI, SearchReport } from '~~/src/apis/ReportAPI'
+import { MenuItem } from 'primevue/menuitem'
+import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Report } from '~~/src/databases/models/Report'
 
-export type DayReport = { date: Dayjs, reports: Report[] }
+export type DayReport = { key: string, date: Dayjs, reports: Report[] }
 
 // const props = defineProps<{
 //   dayReports: DayReport,
 // }>()
 
-// // // eslint-disable-next-line func-call-spacing
-// // const emit = defineEmits<{
-// //   (e: 'open:menu', event: MouseEvent, report: Report),
-// //   (e: 'saved', report: Report),
-// // }>()
+// eslint-disable-next-line func-call-spacing
+// const emit = defineEmits<{
+//   (e: 'update:report', report: Report),
+// }>()
 
 /// ////////////////////////////////////////
 // データ
 
-const dayjs = useDayjs()
-
-// const reports = ref<Report[]>([])
 const dayReports = ref<DayReport[]>([])
 const page = ref<number>(1)
 
@@ -74,66 +71,94 @@ const fetchReports = async () => {
     sorts: [['start_at', 'desc']],
   })
 
-  // 時系列でソートする
-  const sortReports = chunkReports.reverse()
-
-  // 代入していく
-  for (const report of sortReports) {
-    const date = report?.startAt.clone().startOf('date')
-    const target = dayReports.value.find(dr => dr.date.isSame(date, 'date'))
-
-    if (target) {
-      // 存在する場合、追加してソートする
-      target.reports.push(report)
-      target.reports.sort((a, b) => a.startAt.isAfter(b.startAt) ? 1 : -1)
-    } else {
-      // しない場合は新規に作成、ソートする
-      dayReports.value.push({ date, reports: [report] })
-      dayReports.value.sort((a, b) => a.date.isAfter(b.date) ? 1 : -1)
-    }
+  // dayReport に追加していく
+  for (const report of chunkReports) {
+    appendDayReport(report)
   }
 }
 
 onMounted(async () => await fetchReports())
 
-// const dayjs = useDayjs()
-// const formatReportAt = (report: Report) => {
-//   return report.startAt
-//     ? dayjs(report.startAt).format('HH:mm')
-//     : undefined
-// }
+///
 
-// /// ////////////////////////////////////////
-// // メニュー系
+const appendDayReport = (report: Report) => {
+  // 日付で探索する
+  const baseDate = report?.startAt.clone().startOf('date')
+  const targetDay = dayReports.value.find(dr => dr.date.isSame(baseDate, 'date'))
 
-// const cardMenuRef = ref()
-// const selectedReport = ref<Report>()
-// const openCardMenu = (event: MouseEvent, report: Report) => {
-//   selectedReport.value = report
-//   cardMenuRef.value?.toggle(event)
-// }
+  if (targetDay) {
+    // 日付が作成済みなら
+    const ownIdIdx = targetDay.reports.findIndex(r => r.id === report.id)
+    if (ownIdIdx >= 0) {
+      // 自身のIDがある場合置き換え
+      targetDay.reports.splice(ownIdIdx, 1, report)
+    } else {
+      // ない場合は追加してソートする
+      targetDay.reports.push(report)
+      targetDay.reports.sort((a, b) => a.startAt.isAfter(b.startAt) ? 1 : -1) // 日付順
+    }
+  } else {
+    // 日付が無いならば、新規に作成してソート
+    dayReports.value.push({ key: baseDate.toISOString(), date: baseDate, reports: [report] })
+    dayReports.value.sort((a, b) => a.date.isAfter(b.date) ? 1 : -1)
+  }
+}
 
-// const menuItems = ref<MenuItem[]>([
-//   {
-//     label: '編集',
-//     icon: 'pi pi-pencil',
-//     command: () => {
-//       window.alert('edit')
-//     },
-//   },
-//   {
-//     label: '星をつける',
-//     icon: 'pi pi-star',
-//     command: () => {
-//       window.alert('star')
-//     },
-//   },
-//   {
-//     label: '削除',
-//     icon: 'pi pi-trash',
-//     command: () => {
-//       window.alert('delet')
-//     },
-//   },
-// ])
+/// ////////////////////////////////////////
+// メニュー系
+
+const cardMenuRef = ref()
+const selectedReport = ref<Report>()
+const openCardMenu = (event: MouseEvent, report: Report) => {
+  selectedReport.value = report
+  cardMenuRef.value?.toggle(event)
+}
+
+const onToggleStar = async () => {
+  selectedReport.value.isStar = !selectedReport.value.isStar
+  const updReport = await ReportAPI.update(selectedReport.value.id, selectedReport.value)
+  appendDayReport(updReport)
+}
+
+const menuItems = computed<MenuItem[]>(() => {
+  if (selectedReport.value) {
+    const isStar = selectedReport.value.isStar
+    return [
+      {
+        label: '編集',
+        icon: 'pi pi-pencil',
+        command: () => {
+          window.alert('edit')
+        },
+      },
+      {
+        label: isStar ? '星を外す' : '星をつける',
+        icon: isStar ? 'pi pi-star' : 'pi pi-star-fill',
+        command: onToggleStar,
+      },
+      {
+        separator: true,
+      },
+      {
+        label: '削除',
+        icon: 'pi pi-trash',
+        class: 'menu-delete',
+        command: () => {
+          window.alert('delet')
+        },
+      },
+    ]
+  }
+
+  return []
+})
 </script>
+
+<style lang="scss">
+.menu-delete {
+  .p-menuitem-icon,
+  .p-menuitem-text {
+    color: var(--red-500) !important;
+  }
+}
+</style>

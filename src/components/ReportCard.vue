@@ -2,7 +2,7 @@
   <div
     class="report-card-wrapper"
     :class="{
-      'has-star': report.isFavorite,
+      'has-star': report.isStar,
       'is-shrink': isShrink,
       'is-tiny': tiny,
     }"
@@ -20,11 +20,11 @@
 
         <Avatar
           class="!w-6 !h-6"
-          :label="report.project.icon"
-          :style="{ backgroundColor: report.project.color }"
+          :label="report.project?.icon"
+          :style="{ backgroundColor: report.project?.color }"
         />
 
-        <span>{{ report.project.name }}</span>
+        <span>{{ report.project?.name }}</span>
 
         <div class="flex-grow" />
 
@@ -75,7 +75,7 @@
     </Card>
 
     <!-- ピン要素 -->
-    <div v-if="report.isFavorite" class="report-card-pin">
+    <div v-if="report.isStar" class="report-card-pin">
       <i class="pi pi-star-fill" />
     </div>
   </div>
