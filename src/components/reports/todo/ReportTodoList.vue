@@ -4,7 +4,7 @@
       <ReportTodoAccordion
         :report="report"
         @open:menu="openCardMenu"
-        @update:text="onUpdateText"
+        @update:text="reportAction.onUpdateText"
       />
     </template>
 
@@ -14,22 +14,10 @@
 
 <script setup lang="ts">
 import { MenuItem } from 'primevue/menuitem'
-import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Report } from '~~/src/databases/models/Report'
 
-// const props = defineProps<{
-//   dayReports: DayReport,
-// }>()
-
-// eslint-disable-next-line func-call-spacing
-// const emit = defineEmits<{
-//   (e: 'update:report', report: Report),
-// }>()
-
-/// ////////////////////////////////////////
-// データ
-
 const todoService = useTodoService()
+const reportAction = useReportAction(todoService)
 onMounted(() => todoService.fetchList())
 
 /// ////////////////////////////////////////
@@ -42,46 +30,9 @@ const openCardMenu = (event: MouseEvent, report: Report) => {
   cardMenuRef.value?.toggle(event)
 }
 
-const onUpdateText = async (text: string, report: Report, onDone: () => void) => {
-  const form = {
-    ...report,
-    text,
-  }
-  const updReport = await ReportAPI.update(report.id, form)
-  todoService.replaceList(updReport)
-
-  onDone()
-}
-
-///
-
-const onToggleStar = async () => {
-  const form = {
-    ...selectedReport.value,
-    isStar: !selectedReport.value.isStar,
-  }
-  const updReport = await ReportAPI.update(selectedReport.value.id, form)
-  todoService.replaceList(updReport)
-}
-
-const confirm = useConfirm()
-const onDelete = () => {
-  const text = selectedReport.value.text.slice(0, 20).replace(/\r?\n/g, ' ')
-  confirm.require({
-    // eslint-disable-next-line no-irregular-whitespace
-    message: `「${text}...」\n  のレポートを削除しますか？`,
-    header: '削除の確認',
-    icon: 'pi pi-info-circle',
-    acceptClass: 'p-button-danger',
-    accept: async () => {
-      await ReportAPI.remove(selectedReport.value.id)
-      todoService.replaceList(selectedReport.value)
-    },
-  })
-}
-
 const menuItems = computed<MenuItem[]>(() => {
-  if (selectedReport.value) {
+  const report = selectedReport.value
+  if (report) {
     const isStar = selectedReport.value.isStar
     return [
       {
@@ -94,7 +45,7 @@ const menuItems = computed<MenuItem[]>(() => {
       {
         label: isStar ? '星を外す' : '星をつける',
         icon: isStar ? 'pi pi-star' : 'pi pi-star-fill',
-        command: onToggleStar,
+        command: () => reportAction.onToggleStar(report),
       },
       {
         separator: true,
@@ -103,7 +54,7 @@ const menuItems = computed<MenuItem[]>(() => {
         label: '削除',
         icon: 'pi pi-trash',
         class: 'menu-delete',
-        command: onDelete,
+        command: () => reportAction.onDelete(report),
       },
     ]
   }
