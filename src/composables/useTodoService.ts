@@ -34,8 +34,6 @@ export const useTodoService = () => {
     }
   }
 
-  onMounted(async () => await fetchList())
-
   return {
     reports,
     page,

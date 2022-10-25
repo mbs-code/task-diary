@@ -1,7 +1,7 @@
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Report } from '~~/src/databases/models/Report'
 
-type ReportService = ReturnType<typeof useTodoService>
+type ReportService = ReturnType<typeof useTodoService> | ReturnType<typeof useTimelineService>
 
 export const useReportAction = (service: ReportService) => {
   const confirm = useConfirm()
