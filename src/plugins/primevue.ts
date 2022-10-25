@@ -9,6 +9,8 @@ import Avatar from 'primevue/avatar'
 import Card from 'primevue/card'
 import Chip from 'primevue/chip'
 import Menu from 'primevue/menu'
+import Accordion from 'primevue/accordion'
+import AccordionTab from 'primevue/accordiontab'
 import ConfirmDialog from 'primevue/confirmdialog'
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -23,5 +25,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('Card', Card)
   nuxtApp.vueApp.component('Chip', Chip)
   nuxtApp.vueApp.component('Menu', Menu)
+  nuxtApp.vueApp.component('Accordion', Accordion)
+  nuxtApp.vueApp.component('AccordionTab', AccordionTab)
   nuxtApp.vueApp.component('ConfirmDialog', ConfirmDialog)
 })

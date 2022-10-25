@@ -1,23 +1,11 @@
 <template>
   <div
     class="report-card-wrapper"
-    :class="{
-      'has-star': report.isStar,
-      'is-shrink': isShrink,
-      'is-tiny': tiny,
-    }"
+    :class="{ 'has-star': report.isStar }"
   >
-    <!-- カード本体 -->
     <Card class="report-card">
-      <!-- カードヘッダ -->
+      <!-- ヘッダ -->
       <template #title>
-        <Button
-          v-if="accordion"
-          :icon="isShrink ? 'pi pi-angle-right' : 'pi pi-angle-down'"
-          class="p-button-plain p-button-rounded p-button-text"
-          @click="toggleShrink"
-        />
-
         <Avatar
           class="!w-6 !h-6"
           :label="report.project?.icon"
@@ -50,7 +38,7 @@
         </template>
       </template>
 
-      <!-- カードコンテンツ -->
+      <!-- コンテンツ -->
       <template #content>
         <template v-if="isEditMode">
           <Textarea
@@ -86,8 +74,6 @@ import { Report } from '~~/src/databases/models/Report'
 
 const props = defineProps<{
   report: Report,
-  accordion?: boolean, // アコーディオンを使用する
-  tiny?: boolean, // 小さいモード
 }>()
 
 // eslint-disable-next-line func-call-spacing
@@ -95,14 +81,6 @@ const emit = defineEmits<{
   (e: 'open:menu', event: MouseEvent, report: Report),
   (e: 'update:text', text: string, report: Report, onDone: () => void),
 }>()
-
-/// ////////////////////////////////////////
-// アコーディオン系
-
-const isShrink = ref<boolean>(false)
-const toggleShrink = () => {
-  isShrink.value = !isShrink.value
-}
 
 /// ////////////////////////////////////////
 // メニュー系
@@ -162,36 +140,7 @@ const onSave = () => {
     }
   }
 
-  // シュリンク時、本文を消す
-  &.is-shrink {
-    .p-card-content {
-      display: none;
-    }
-  }
-
-  // 小さいモード
-  &.is-tiny {
-    .p-card-title {
-      font-size: 1.0rem;
-      button {
-        width: 1.5rem;
-        height: 1.5rem;
-      }
-    }
-
-    .p-card-body {
-      padding: calc(1rem - 3px); // 囲い分引く
-    }
-
-    // &.has-star {
-    //   .p-card-body {
-    //     padding: calc(1rem - 3px); // 囲い分引く
-    //   }
-    // }
-  }
-
-  ///
-
+  // ピン要素
   .report-card-pin {
     position: absolute;
     top: 0;

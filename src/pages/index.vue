@@ -19,11 +19,13 @@
       </template>
 
       <div class="flex">
-        <div class="overflow-y-scroll" style="height: calc(100vh - 40px)">
+        <div class="basis-1/2 overflow-y-scroll" style="height: calc(100vh - 40px)">
           <ReportTimeline class="p-4" />
         </div>
-        <!-- <ReportList :day-reports="dayReports" />
-        <ReportTodoList :reports="dayReports.at(0).reports" /> -->
+
+        <div class="basis-1/2 overflow-y-scroll" style="height: calc(100vh - 40px)">
+          <ReportTodoList class="p-4" />
+        </div>
       </div>
 
       <ReportEditDialog v-model:visible="showReportEditDialog" />
