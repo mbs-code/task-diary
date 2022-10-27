@@ -36,7 +36,7 @@ export class ProjectAPI {
     const { query } = this.getSearchQuery(search)
 
     // 取得
-    const dbProjects = await query
+    const dbProjects: DBProject[] = await query
       .selectAll()
       .if(Boolean(search?.page) && Boolean(search.limit), qb => qb.offset((search.page - 1) * search.limit))
       .if(Boolean(search?.limit), qb => qb.limit(search.limit))
