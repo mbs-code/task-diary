@@ -11,7 +11,7 @@ export const useTodoService = () => {
       onlyTodo: true,
       // limit: 5,
       // page: page.value,
-      sorts: [['created_at', 'desc']],
+      sorts: [['updated_at', 'desc']],
     })
   }
 

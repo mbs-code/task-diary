@@ -1,6 +1,9 @@
+import { SelectQueryBuilder } from 'kysely'
+import { From } from 'kysely/dist/cjs/parser/table-parser'
 import { useDatabase } from '~~/src/composables/useDatabase'
 import { useDayjs } from '~~/src/composables/useDayjs'
 import { DBProject, formatProject, FormProject, parseProject, Project } from '~~/src/databases/models/Project'
+import { Tables } from '~~/src/databases/Tables'
 
 export type SearchProject = {
   text?: string
@@ -14,7 +17,7 @@ export class ProjectAPI {
   protected static getSearchQuery (search?: SearchProject) {
     const { db } = useDatabase()
 
-    const query = db
+    const query: SelectQueryBuilder<From<Tables, 'projects'>, 'projects', {}> = db
       .selectFrom('projects')
       .if(Boolean(search?.text), qb => qb.where('name', 'like', `%${search.text}%`))
       .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))

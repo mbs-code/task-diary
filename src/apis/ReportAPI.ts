@@ -1,8 +1,12 @@
+import { Dayjs } from 'dayjs'
+import { SelectQueryBuilder } from 'kysely'
+import { From } from 'kysely/dist/cjs/parser/table-parser'
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
 import { StatusAPI } from '~~/src/apis/StatusAPI'
 import { useDatabase } from '~~/src/composables/useDatabase'
 import { useDayjs } from '~~/src/composables/useDayjs'
 import { DBReport, formatReport, FormReport, parseReport, Report } from '~~/src/databases/models/Report'
+import { Tables } from '~~/src/databases/Tables'
 
 export type SearchReport = {
   text?: string
@@ -18,7 +22,7 @@ export class ReportAPI {
   protected static getSearchQuery (search?: SearchReport) {
     const { db } = useDatabase()
 
-    const query = db
+    const query: SelectQueryBuilder<From<Tables, 'reports'>, 'reports', {}> = db
       .selectFrom('reports')
       .if(Boolean(search?.text), qb => qb.where('text', 'like', `%${search.text}%`))
       .if(Boolean(search?.onlyTask), qb => qb.where('start_at', 'is not', null))

@@ -1,6 +1,9 @@
+import { SelectQueryBuilder } from 'kysely'
+import { From } from 'kysely/dist/cjs/parser/table-parser'
 import { useDatabase } from '~~/src/composables/useDatabase'
 import { useDayjs } from '~~/src/composables/useDayjs'
 import { DBStatus, formatStatus, FormStatus, parseStatus, Status } from '~~/src/databases/models/Status'
+import { Tables } from '~~/src/databases/Tables'
 
 export type SearchStatus = {
   text?: string
@@ -14,7 +17,7 @@ export class StatusAPI {
   protected static getSearchQuery (search?: SearchStatus) {
     const { db } = useDatabase()
 
-    const query = db
+    const query: SelectQueryBuilder<From<Tables, 'statuses'>, 'statuses', {}> = db
       .selectFrom('statuses')
       .if(Boolean(search?.text), qb => qb.where('name', 'like', `%${search.text}%`))
       .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
