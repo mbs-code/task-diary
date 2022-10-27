@@ -12,6 +12,7 @@ import Menu from 'primevue/menu'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import ConfirmDialog from 'primevue/confirmdialog'
+import Calendar from 'primevue/calendar'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(PrimeVue, { ripple: true })
@@ -28,4 +29,5 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('Accordion', Accordion)
   nuxtApp.vueApp.component('AccordionTab', AccordionTab)
   nuxtApp.vueApp.component('ConfirmDialog', ConfirmDialog)
+  nuxtApp.vueApp.component('Calendar', Calendar)
 })

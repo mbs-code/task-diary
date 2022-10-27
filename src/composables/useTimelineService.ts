@@ -26,7 +26,7 @@ export const useTimelineService = () => {
 
   const replaceList = (report: Report) => {
     // 日付で探索する
-    const baseDate = report?.startAt.clone().startOf('date')
+    const baseDate = report.startAt.clone().startOf('date')
     const targetDay = dayReports.value.find(dr => dr.date.isSame(baseDate, 'date'))
 
     if (targetDay) {
@@ -50,14 +50,21 @@ export const useTimelineService = () => {
   const removeList = (report: Report) => {
     // 日付で探索する
     const baseDate = report?.startAt.clone().startOf('date')
-    const targetDay = dayReports.value.find(dr => dr.date.isSame(baseDate, 'date'))
+    const targetDayIndex = dayReports.value.findIndex(dr => dr.date.isSame(baseDate, 'date'))
 
-    if (targetDay) {
+    if (targetDayIndex >= 0) {
+      const targetDay = dayReports.value.at(targetDayIndex)
+
       // 日付が作成済みなら
       const ownIdIdx = targetDay.reports.findIndex(r => r.id === report.id)
       if (ownIdIdx >= 0) {
         // 自身のIDがある場合削除
         targetDay.reports.splice(ownIdIdx, 1)
+
+        // もし配列が空になれば削除
+        if (targetDay.reports.length === 0) {
+          dayReports.value.splice(targetDayIndex, 1)
+        }
       }
     }
   }

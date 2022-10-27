@@ -4,18 +4,40 @@
   font-family: 'Noto Sans JP', sans-serif;
 }
 
-// .p-dialog {
-//   .p-dialog-header {
-//     @apply !py-2;
-//   }
+.p-dialog {
+  .p-dialog-header {
+    @apply !py-2;
+  }
 
-//   .p-dialog-footer {
-//     @apply !py-2;
-//     @apply flex items-center gap-2;
+  .p-dialog-footer {
+    @apply !py-2;
+    @apply flex items-center gap-2;
 
-//     button {
-//       @apply !px-3 !py-2;
-//     }
-//   }
-// }
+    button {
+      @apply !px-3 !py-2;
+    }
+  }
+}
 
+.p-dropdown {
+  .p-dropdown-label {
+    @apply flex items-center gap-2;
+  }
+}
+.p-dropdown-panel {
+  .p-dropdown-item {
+    @apply flex items-center gap-2;
+  }
+}
+
+.p-datepicker {
+  min-width: 360px !important;
+
+  table td {
+    padding: 0;
+  }
+
+  .p-datepicker-buttonbar {
+    @apply py-2;
+  }
+}

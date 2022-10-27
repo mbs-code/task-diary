@@ -16,9 +16,17 @@
 import { MenuItem } from 'primevue/menuitem'
 import { Report } from '~~/src/databases/models/Report'
 
-const todoService = useTodoService()
-const reportAction = useReportAction(todoService)
-onMounted(() => todoService.fetchList())
+const props = defineProps<{
+  todoService: ReturnType<typeof useTodoService>,
+}>()
+
+// eslint-disable-next-line func-call-spacing
+const emit = defineEmits<{
+  (e: 'edit:report', report: Report),
+}>()
+
+const reportAction = useReportAction(props.todoService)
+onMounted(() => props.todoService.fetchList())
 
 /// ////////////////////////////////////////
 // メニュー系
@@ -38,9 +46,7 @@ const menuItems = computed<MenuItem[]>(() => {
       {
         label: '編集',
         icon: 'pi pi-pencil',
-        command: () => {
-          window.alert('edit')
-        },
+        command: () => emit('edit:report', report),
       },
       {
         label: isStar ? '星を外す' : '星をつける',
