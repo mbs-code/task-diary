@@ -22,6 +22,7 @@
     "kysely": "^0.22.0",
     "primeicons": "^6.0.1",
     "primevue": "^3.17.0",
-    "tauri-plugin-sql-api": "github:mbs-code/tauri-plugin-sql#bed077ab82d05fb07e64634cba8826e1af6057e1"
+    "tauri-plugin-sql-api": "github:mbs-code/tauri-plugin-sql#bed077ab82d05fb07e64634cba8826e1af6057e1",
+    "v3-infinite-loading": "^1.2.1"
   }
 }

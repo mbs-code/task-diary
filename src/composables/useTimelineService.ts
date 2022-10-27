@@ -1,12 +1,36 @@
 import { Dayjs } from 'dayjs'
+import { Ref } from 'nuxt/dist/app/compat/capi'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Report } from '~~/src/databases/models/Report'
 
 export type DayReport = { key: string, date: Dayjs, reports: Report[] }
 
-export const useTimelineService = () => {
+type InfiniteState = {
+  loaded: () => void
+  complete: () => void
+  error: () => void
+}
+
+export const useTimelineService = (timelineRef: Ref<HTMLDivElement>) => {
   const dayReports = ref<DayReport[]>([])
-  const page = ref<number>(1)
+  const oldestStartAt = ref<Dayjs>() // 取得した範囲で一番古い情報
+  const oldestIds = ref<number[]>([]) // 上の該当ID
+
+  const onLoadPrev = async ($state: InfiniteState) => {
+    // 前の要素を取ってくる
+    console.log('prev')
+    const cnt = await fetchList()
+    if (cnt > 0) {
+      $state.loaded()
+    } else {
+      $state.complete()
+    }
+  }
+
+  const onLoadNext = () => {
+    // 次の要素を取ってくる
+    console.log('next')
+  }
 
   const fetchList = async () => {
     // TODO: 自動スクロール対応
@@ -14,14 +38,32 @@ export const useTimelineService = () => {
     const chunkReports = await ReportAPI.getAll({
       onlyTask: true,
       limit: 5,
-      page: page.value,
+      until: oldestStartAt.value,
+      notin: oldestIds.value.length ? oldestIds.value : undefined,
       sorts: [['start_at', 'desc']],
     })
 
-    // dayReport に追加していく
+    // 差分取得用コード
     for (const report of chunkReports) {
+      // 保持情報より古いなら追加
+      if (!oldestStartAt.value) {
+        // 保持日時が無ければ追加
+        oldestStartAt.value = report.startAt
+        oldestIds.value = [report.id]
+      } else if (report.startAt && oldestStartAt.value.isAfter(report.startAt)) {
+        // レポートの日時が古ければ更新
+        oldestStartAt.value = report.startAt
+        oldestIds.value = [report.id]
+      } else if (report.startAt && oldestStartAt.value.isSame(report.startAt)) {
+        // レポートの日時が同じならば追記
+        oldestIds.value.push(report.id)
+      }
+
+      // dayReport に追加していく
       replaceList(report)
     }
+
+    return chunkReports.length
   }
 
   const replaceList = (report: Report) => {
@@ -70,9 +112,12 @@ export const useTimelineService = () => {
   }
 
   return {
-    dayReports,
-    page,
+    timelineRef,
 
+    dayReports,
+
+    onLoadPrev,
+    onLoadNext,
     fetchList,
 
     replaceList,

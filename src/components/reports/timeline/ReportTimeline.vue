@@ -1,5 +1,7 @@
 <template>
   <div class="flex flex-col gap-8">
+    <InfiniteLoading @infinite="timelineService.onLoadPrev" />
+
     <div
       v-for="dayReport of timelineService.dayReports.value"
       :key="dayReport.key"
@@ -37,7 +39,9 @@
 
 <script setup lang="ts">
 import { MenuItem } from 'primevue/menuitem'
+import InfiniteLoading from 'v3-infinite-loading'
 import { Report } from '~~/src/databases/models/Report'
+import 'v3-infinite-loading/lib/style.css'
 
 const props = defineProps<{
   timelineService: ReturnType<typeof useTimelineService>,
@@ -49,7 +53,12 @@ const emit = defineEmits<{
 }>()
 
 const reportAction = useReportAction(props.timelineService)
-onMounted(() => props.timelineService.fetchList())
+onMounted(async () => {
+  await props.timelineService.fetchList()
+
+  const tl = props.timelineService.timelineRef.value
+  tl.scrollTo(0, tl.scrollHeight)
+})
 
 /// ////////////////////////////////////////
 // メニュー系

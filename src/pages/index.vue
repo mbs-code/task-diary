@@ -19,7 +19,7 @@
       </template>
 
       <div class="flex">
-        <div class="basis-1/2 overflow-y-scroll" style="height: calc(100vh - 40px)">
+        <div ref="timelineRef" class="basis-1/2 overflow-y-scroll" style="height: calc(100vh - 40px)">
           <ReportTimeline
             :timeline-service="timelineService"
             class="p-4"
@@ -61,7 +61,9 @@ onMounted(async () => {
 /// ////////////////////////////////////////
 // サービス系
 
-const timelineService = useTimelineService()
+const timelineRef = ref<HTMLDivElement>()
+
+const timelineService = useTimelineService(timelineRef)
 const todoService = useTodoService()
 
 const onUpsertReport = (report: Report, oldReport?: Report) => {

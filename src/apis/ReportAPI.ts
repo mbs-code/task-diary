@@ -9,10 +9,13 @@ import { DBReport, formatReport, FormReport, parseReport, Report } from '~~/src/
 import { Tables } from '~~/src/databases/Tables'
 
 export type SearchReport = {
+  in?: number[] // id配列で取得
+  notin?: number[] // id配列で除外
   text?: string
   onlyTask?: boolean // タスク要素
   onlyTodo?: boolean // TO-DO要素
-  in?: number[] // id配列で取得
+  until?: Dayjs // この時間以前(含む)
+  since?: Dayjs // この日以降(含む)
   page?: number
   limit?: number
   sorts?: [keyof DBReport, 'asc' | 'desc'][]
@@ -24,10 +27,13 @@ export class ReportAPI {
 
     const query: SelectQueryBuilder<From<Tables, 'reports'>, 'reports', {}> = db
       .selectFrom('reports')
+      .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
+      .if(Boolean(search?.notin), qb => qb.where('id', 'not in', search.notin))
       .if(Boolean(search?.text), qb => qb.where('text', 'like', `%${search.text}%`))
       .if(Boolean(search?.onlyTask), qb => qb.where('start_at', 'is not', null))
       .if(Boolean(search?.onlyTodo), qb => qb.where('start_at', 'is', null))
-      .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
+      .if(Boolean(search?.until), qb => qb.where('start_at', '<=', search.until.toISOString()))
+      .if(Boolean(search?.since), qb => qb.where('start_at', '>=', search.until.toISOString()))
 
     // NOTE: page limit sorts など、countに影響しないものは実装しない
     return { db, query }
