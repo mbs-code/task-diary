@@ -1,10 +1,10 @@
+import { InjectionKey } from 'nuxt/dist/app/compat/capi'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Report } from '~~/src/databases/models/Report'
 
-type ReportService = ReturnType<typeof useTodoService> | ReturnType<typeof useTimelineService>
-
-export const useReportAction = (service: ReportService) => {
+export const useReportAction = (service: ReturnType<typeof useReportService>) => {
   const confirm = useConfirm()
+  const dayjs = useDayjs()
 
   /** テキストのみ更新する */
   const onUpdateText = async (text: string, report: Report, onDone?: () => void) => {
@@ -13,7 +13,7 @@ export const useReportAction = (service: ReportService) => {
       text,
     }
     const updReport = await ReportAPI.update(report.id, form)
-    service.replaceList(updReport)
+    service.updateList(updReport)
 
     onDone && onDone()
   }
@@ -25,7 +25,7 @@ export const useReportAction = (service: ReportService) => {
       isStar: !report.isStar,
     }
     const updReport = await ReportAPI.update(report.id, form)
-    service.replaceList(updReport)
+    service.updateList(updReport)
   }
 
   /** レポートの削除 */
@@ -42,7 +42,7 @@ export const useReportAction = (service: ReportService) => {
         acceptClass: 'p-button-danger',
         accept: async () => {
           await ReportAPI.remove(report.id)
-          service.removeList(report)
+          service.updateList(report)
 
           resolve()
         },
@@ -59,3 +59,7 @@ export const useReportAction = (service: ReportService) => {
     onDelete,
   }
 }
+
+export const ReportActionKey:
+  InjectionKey<ReturnType<typeof useReportAction>> =
+  Symbol('useReportAction')

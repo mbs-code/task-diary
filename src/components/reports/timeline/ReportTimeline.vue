@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col gap-8">
-    <InfiniteLoading @infinite="timelineService.onLoadPrev" />
+    <InfiniteLoading @infinite="reportService.timeline.onLoadPrev" />
 
     <div
-      v-for="dayReport of timelineService.dayReports.value"
+      v-for="dayReport of reportService.timeline.dayReports.value"
       :key="dayReport.key"
       class="flex gap-2"
     >
@@ -33,6 +33,10 @@
       </div>
     </div>
 
+    <div class="ml-9rem">
+      <Button class="w-full" label="新規作成" @click="onCreate" />
+    </div>
+
     <Menu ref="cardMenuRef" :model="menuItems" :popup="true" />
   </div>
 </template>
@@ -43,22 +47,27 @@ import InfiniteLoading from 'v3-infinite-loading'
 import { Report } from '~~/src/databases/models/Report'
 import 'v3-infinite-loading/lib/style.css'
 
-const props = defineProps<{
-  timelineService: ReturnType<typeof useTimelineService>,
-}>()
-
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (e: 'edit:report', report: Report),
+  (e: 'edit:report', report?: Report),
 }>()
 
-const reportAction = useReportAction(props.timelineService)
-onMounted(async () => {
-  await props.timelineService.fetchList()
+const reportService = inject(ReportServiceKey)
+const reportAction = inject(ReportActionKey)
 
-  const tl = props.timelineService.timelineRef.value
-  tl.scrollTo(0, tl.scrollHeight)
-})
+/// ////////////////////////////////////////
+
+const dayjs = useDayjs()
+const onCreate = () => {
+  emit('edit:report', {
+    id: 0,
+    text: '',
+    isStar: false,
+    startAt: dayjs(),
+    createdAt: undefined,
+    updatedAt: undefined,
+  })
+}
 
 /// ////////////////////////////////////////
 // メニュー系
@@ -75,6 +84,11 @@ const menuItems = computed<MenuItem[]>(() => {
   if (report) {
     const isStar = selectedReport.value.isStar
     return [
+      {
+        label: 'ToDoに移動',
+        icon: 'pi pi-inbox',
+        command: () => emit('edit:report', report),
+      },
       {
         label: '編集',
         icon: 'pi pi-pencil',

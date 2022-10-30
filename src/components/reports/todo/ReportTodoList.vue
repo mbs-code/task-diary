@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-1">
-    <template v-for="report of todoService.reports.value" :key="report.id">
+    <template v-for="report of reportService.todo.reports.value" :key="report.id">
       <ReportTodoAccordion
         :report="report"
         @open:menu="openCardMenu"
@@ -16,17 +16,13 @@
 import { MenuItem } from 'primevue/menuitem'
 import { Report } from '~~/src/databases/models/Report'
 
-const props = defineProps<{
-  todoService: ReturnType<typeof useTodoService>,
-}>()
-
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
   (e: 'edit:report', report: Report),
 }>()
 
-const reportAction = useReportAction(props.todoService)
-onMounted(() => props.todoService.fetchList())
+const reportService = inject(ReportServiceKey)
+const reportAction = inject(ReportActionKey)
 
 /// ////////////////////////////////////////
 // メニュー系

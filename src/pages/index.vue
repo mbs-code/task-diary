@@ -21,15 +21,13 @@
       <div class="flex">
         <div ref="timelineRef" class="basis-1/2 overflow-y-scroll" style="height: calc(100vh - 40px)">
           <ReportTimeline
-            :timeline-service="timelineService"
             class="p-4"
             @edit:report="openReportEditDialog"
           />
         </div>
 
-        <div class="basis-1/2 overflow-y-scroll" style="height: calc(100vh - 40px)">
+        <div ref="todoRef" class="basis-1/2 overflow-y-scroll" style="height: calc(100vh - 40px)">
           <ReportTodoList
-            :todo-service="todoService"
             class="p-4"
             @edit:report="openReportEditDialog"
           />
@@ -40,7 +38,7 @@
         v-model:visible="showReportEditDialog"
         :report="selectedReport"
         :projects="projects"
-        @update:report="onUpsertReport"
+        @update:report="reportService.updateList"
       />
     </NuxtLayout>
   </div>
@@ -62,27 +60,20 @@ onMounted(async () => {
 // サービス系
 
 const timelineRef = ref<HTMLDivElement>()
+const todoRef = ref<HTMLDivElement>()
+const reportService = useReportService(timelineRef, todoRef)
+const reportAction = useReportAction(reportService)
 
-const timelineService = useTimelineService(timelineRef)
-const todoService = useTodoService()
+provide(ReportServiceKey, reportService)
+provide(ReportActionKey, reportAction)
 
-const onUpsertReport = (report: Report, oldReport?: Report) => {
-  // 過去のレポートがあるなら一旦削除する
-  if (oldReport) {
-    if (oldReport?.startAt) {
-      timelineService.removeList(oldReport)
-    } else {
-      todoService.removeList(oldReport)
-    }
-  }
+onMounted(async () => {
+  await reportService.timeline.fetchList()
+  await reportService.todo.fetchList()
 
-  // 新レポートを追加する
-  if (report.startAt) {
-    timelineService.replaceList(report)
-  } else {
-    todoService.replaceList(report)
-  }
-}
+  const tl = reportService.timeline.timelineRef.value
+  tl?.scrollTo(0, tl.scrollHeight)
+})
 
 /// ////////////////////////////////////////
 // ダイアログ系
