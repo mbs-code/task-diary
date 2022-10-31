@@ -26,6 +26,12 @@ export default defineNuxtConfig({
     pathPrefix: false,
   }],
 
+  imports: {
+    dirs: [
+      'composables/**',
+    ],
+  },
+
   vite: {
     clearScreen: false,
     server: {

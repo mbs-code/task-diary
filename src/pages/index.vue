@@ -75,6 +75,9 @@ onMounted(async () => {
   tl?.scrollTo(0, tl.scrollHeight)
 })
 
+const projectService = useProjectService()
+provide(ProjectServiceKey, projectService)
+
 /// ////////////////////////////////////////
 // ダイアログ系
 
