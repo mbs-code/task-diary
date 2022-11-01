@@ -1,8 +1,7 @@
-import { Ref } from 'nuxt/dist/app/compat/capi'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Report } from '~~/src/databases/models/Report'
 
-export const useTodoService = (todoRef: Ref<HTMLDivElement>) => {
+export const useTodoService = () => {
   const reports = ref<Report[]>([])
   const page = ref<number>(1)
 

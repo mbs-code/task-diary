@@ -1,5 +1,4 @@
 import { Dayjs } from 'dayjs'
-import { Ref } from 'nuxt/dist/app/compat/capi'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Report } from '~~/src/databases/models/Report'
 
@@ -11,7 +10,7 @@ type InfiniteState = {
   error: () => void
 }
 
-export const useTimelineService = (timelineRef: Ref<HTMLDivElement>) => {
+export const useTimelineService = () => {
   const dayReports = ref<DayReport[]>([])
   const oldestStartAt = ref<Dayjs>() // 取得した範囲で一番古い情報
   const oldestIds = ref<number[]>([]) // 上の該当ID
@@ -112,8 +111,6 @@ export const useTimelineService = (timelineRef: Ref<HTMLDivElement>) => {
   }
 
   return {
-    timelineRef,
-
     dayReports,
 
     onLoadPrev,

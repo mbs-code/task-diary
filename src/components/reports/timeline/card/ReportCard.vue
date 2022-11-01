@@ -66,6 +66,7 @@ const switchViewMode = () => {
 <style lang="scss">
 .report-card-wrapper {
   position: relative;
+  min-width: 300px;
 
   // 星を付ける
   &.has-star {

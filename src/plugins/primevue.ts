@@ -13,6 +13,8 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import ConfirmDialog from 'primevue/confirmdialog'
 import Calendar from 'primevue/calendar'
+import Splitter from 'primevue/splitter'
+import SplitterPanel from 'primevue/splitterpanel'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(PrimeVue, { ripple: true })
@@ -30,4 +32,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('AccordionTab', AccordionTab)
   nuxtApp.vueApp.component('ConfirmDialog', ConfirmDialog)
   nuxtApp.vueApp.component('Calendar', Calendar)
+  nuxtApp.vueApp.component('Splitter', Splitter)
+  nuxtApp.vueApp.component('SplitterPanel', SplitterPanel)
 })

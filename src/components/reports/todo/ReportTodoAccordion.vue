@@ -119,6 +119,7 @@ const onSave = () => {
 <style lang="scss">
 .report-accordion-wrapper {
   position: relative;
+  min-width: 300px;
 
   .p-accordion {
     .p-accordion-header-link {

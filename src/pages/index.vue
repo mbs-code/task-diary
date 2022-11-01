@@ -18,21 +18,20 @@
         />
       </template>
 
-      <div class="flex">
-        <div ref="timelineRef" class="basis-1/2 overflow-y-scroll" style="height: calc(100vh - 40px)">
+      <Splitter class="!bg-inherit !border-0 bg" style="height: calc(100vh - 40px)">
+        <SplitterPanel ref="timelineRef" class="min-w-200px overflow-y-scroll">
           <ReportTimeline
             class="p-4"
             @edit:report="openReportEditDialog"
           />
-        </div>
-
-        <div ref="todoRef" class="basis-1/2 overflow-y-scroll" style="height: calc(100vh - 40px)">
+        </SplitterPanel>
+        <SplitterPanel ref="todoRef" class="overflow-y-scroll">
           <ReportTodoList
             class="p-4"
             @edit:report="openReportEditDialog"
           />
-        </div>
-      </div>
+        </SplitterPanel>
+      </Splitter>
 
       <ReportEditDialog
         v-model:visible="showReportEditDialog"
@@ -59,8 +58,8 @@ onMounted(async () => {
 /// ////////////////////////////////////////
 // サービス系
 
-const timelineRef = ref<HTMLDivElement>()
-const todoRef = ref<HTMLDivElement>()
+const timelineRef = ref()
+const todoRef = ref()
 const reportService = useReportService(timelineRef, todoRef)
 const reportAction = useReportAction(reportService)
 
@@ -71,7 +70,7 @@ onMounted(async () => {
   await reportService.timeline.fetchList()
   await reportService.todo.fetchList()
 
-  const tl = reportService.timeline.timelineRef.value
+  const tl = timelineRef.value.$el
   tl?.scrollTo(0, tl.scrollHeight)
 })
 

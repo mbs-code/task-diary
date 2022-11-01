@@ -1,12 +1,9 @@
 import { InjectionKey, Ref } from 'nuxt/dist/app/compat/capi'
 import { Report } from '~~/src/databases/models/Report'
 
-export const useReportService = (
-  timelineRef: Ref<HTMLDivElement>,
-  todoRef: Ref<HTMLDivElement>,
-) => {
-  const timelineService = useTimelineService(timelineRef)
-  const todoService = useTodoService(todoRef)
+export const useReportService = (timelineRef: Ref, todoRef: Ref) => {
+  const timelineService = useTimelineService()
+  const todoService = useTodoService()
 
   /** レポートを表示・更新する */
   const updateList = (report: Report, oldReport?: Report) => {
