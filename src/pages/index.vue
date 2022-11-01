@@ -35,6 +35,7 @@
       </template>
 
       <Splitter
+        ref="mainRef"
         :gutter-size="6"
         class="!bg-inherit !border-0 bg"
         style="height: calc(100vh - 40px)"
@@ -72,6 +73,7 @@
 </template>
 
 <script setup lang="ts">
+import Splitter from 'primevue/splitter'
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
 import { Project } from '~~/src/databases/models/Project'
 import { Report } from '~~/src/databases/models/Report'
@@ -88,9 +90,10 @@ const showTodoPanel = ref<boolean>(true)
 /// ////////////////////////////////////////
 // サービス系
 
+const mainRef = ref()
 const timelineRef = ref()
 const todoRef = ref()
-const reportService = useReportService(timelineRef, todoRef)
+const reportService = useReportService(mainRef, timelineRef, todoRef)
 const reportAction = useReportAction(reportService)
 
 provide(ReportServiceKey, reportService)

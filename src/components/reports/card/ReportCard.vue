@@ -1,5 +1,6 @@
 <template>
   <div
+    :name="`report-${report.id}`"
     class="report-card-wrapper"
     :class="{ 'has-star': report.isStar }"
   >

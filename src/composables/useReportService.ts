@@ -1,7 +1,11 @@
 import { InjectionKey, Ref } from 'nuxt/dist/app/compat/capi'
 import { Report } from '~~/src/databases/models/Report'
 
-export const useReportService = (timelineRef: Ref, todoRef: Ref) => {
+export const useReportService = (
+  mainRef: Ref,
+  _timelineRef: Ref,
+  _todoRef: Ref,
+) => {
   const timelineService = useTimelineService()
   const todoService = useTodoService()
 
@@ -22,10 +26,17 @@ export const useReportService = (timelineRef: Ref, todoRef: Ref) => {
     } else {
       todoService.replaceList(report)
     }
+
+    // フォーカス
+    nextTick(() => {
+      const dom = mainRef.value?.$el.querySelector(`[name=report-${report.id}]`)
+      dom.scrollIntoView({ behavior: 'smooth' })
+    })
   }
 
   /** レポートをリストから削除する */
   const removeList = (report: Report) => {
+    // レポートを削除する
     if (report?.startAt) {
       timelineService.removeList(report)
     } else {
