@@ -3,13 +3,6 @@
     <NuxtLayout name="default">
       <template #header>
         <div>Task Diary</div>
-        <div class="flex-grow" name="padding" />
-
-        <Button
-          class="p-button-plain p-button-text !w-8 !h-8"
-          icon="pi pi-file-edit"
-          @click="openReportEditDialog()"
-        />
 
         <Button
           class="p-button-plain p-button-text !w-8 !h-8"
@@ -17,7 +10,19 @@
           @click="onSeed"
         />
 
-        <div class="w-1" name="padding" />
+        <div class="flex-grow" name="padding" />
+
+        <Button
+          class="p-button-plain p-button-text !w-8 !h-8"
+          icon="pi pi-file-edit"
+          @click="openReportEditDialog(undefined)"
+        />
+
+        <Button
+          class="p-button-plain p-button-text !w-8 !h-8"
+          icon="pi pi-box"
+          @click="openProjectEditDialog"
+        />
 
         <Button
           v-if="!showTodoPanel"
@@ -68,6 +73,10 @@
         :projects="projects"
         @update:report="reportService.updateList"
       />
+
+      <ProjectEditDialog
+        v-model:visible="showProjectEditDialog"
+      />
     </NuxtLayout>
   </div>
 </template>
@@ -117,7 +126,12 @@ const selectedReport = ref<Report>()
 const showReportEditDialog = ref<boolean>(false)
 const openReportEditDialog = (report?: Report) => {
   selectedReport.value = report
-  showReportEditDialog.value = !showReportEditDialog.value
+  showReportEditDialog.value = true
+}
+
+const showProjectEditDialog = ref<boolean>(false)
+const openProjectEditDialog = () => {
+  showProjectEditDialog.value = true
 }
 
 /// ////////////////////////////////////////

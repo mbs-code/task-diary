@@ -13,6 +13,9 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import Calendar from 'primevue/calendar'
 import Splitter from 'primevue/splitter'
 import SplitterPanel from 'primevue/splitterpanel'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import InputText from 'primevue/inputtext'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(PrimeVue, { ripple: true })
@@ -30,4 +33,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('Calendar', Calendar)
   nuxtApp.vueApp.component('Splitter', Splitter)
   nuxtApp.vueApp.component('SplitterPanel', SplitterPanel)
+  nuxtApp.vueApp.component('DataTable', DataTable)
+  nuxtApp.vueApp.component('Column', Column)
+  nuxtApp.vueApp.component('InputText', InputText)
 })
