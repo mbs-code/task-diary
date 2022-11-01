@@ -26,7 +26,6 @@
               class="flex-grow"
               :report="report"
               @open:menu="openCardMenu"
-              @update:text="reportAction.onUpdateText"
             />
           </div>
         </div>
@@ -87,7 +86,7 @@ const menuItems = computed<MenuItem[]>(() => {
       {
         label: 'ToDoに移動',
         icon: 'pi pi-inbox',
-        command: () => emit('edit:report', report),
+        command: () => reportAction.onSwitchTodo(report),
       },
       {
         label: '編集',

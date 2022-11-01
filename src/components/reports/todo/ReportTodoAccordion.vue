@@ -81,7 +81,6 @@ const props = defineProps<{
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
   (e: 'open:menu', event: MouseEvent, report: Report),
-  (e: 'update:text', text: string, report: Report, onDone: () => void),
 }>()
 
 /// ////////////////////////////////////////
@@ -112,7 +111,7 @@ const switchViewMode = () => {
 
 const onSave = () => {
   const newText = (text.value ?? '').trim()
-  emit('update:text', newText, props.report, switchViewMode)
+  // emit('update:text', newText, props.report, switchViewMode)
 }
 </script>
 
@@ -161,53 +160,4 @@ const onSave = () => {
     margin-right: -0.1rem;
   }
 }
-
-// .report-card-wrapper {
-//   position: relative;
-
-//   .p-card {
-//     .p-card-title {
-//       @apply flex items-center gap-2;
-//       @apply m-0 pr-3;
-//     }
-
-//     .p-card-content {
-//       @apply pb-0;
-//     }
-//   }
-
-//   // 星を付ける
-//   &.has-star {
-//     .report-card {
-//       border: solid 3px var(--yellow-700);
-//     }
-
-//     .p-card-body {
-//       padding: calc(1.5rem - 3px); // 囲い分引く
-//     }
-//   }
-
-//   // シュリンク時、本文を消す
-//   &.is-shrink {
-//     .p-card-content {
-//       display: none;
-//     }
-//   }
-
-//   ///
-
-//   .report-card-pin {
-//     position: absolute;
-//     top: 0;
-//     right: 0;
-//     width: 2rem;
-//     height: 2rem;
-//     color: white;
-//     background-color: var(--yellow-700);
-//     border-top-right-radius: 4px;
-//     border-bottom-left-radius: 1rem;
-//     padding-top: 0.2rem;
-//     padding-left: 0.6rem;
-//   }
-// }
 </style>

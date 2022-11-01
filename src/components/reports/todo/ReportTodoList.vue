@@ -4,7 +4,6 @@
       <ReportTodoAccordion
         :report="report"
         @open:menu="openCardMenu"
-        @update:text="reportAction.onUpdateText"
       />
     </template>
 
@@ -39,6 +38,11 @@ const menuItems = computed<MenuItem[]>(() => {
   if (report) {
     const isStar = selectedReport.value.isStar
     return [
+      {
+        label: 'タスクに移動',
+        icon: 'pi pi-inbox',
+        command: () => reportAction.onSwitchTask(report),
+      },
       {
         label: '編集',
         icon: 'pi pi-pencil',

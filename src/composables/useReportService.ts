@@ -5,7 +5,7 @@ export const useReportService = (timelineRef: Ref, todoRef: Ref) => {
   const timelineService = useTimelineService()
   const todoService = useTodoService()
 
-  /** レポートを表示・更新する */
+  /** レポートをリストに追加・更新する */
   const updateList = (report: Report, oldReport?: Report) => {
     // 過去のレポートがあるなら一旦削除する
     if (oldReport) {
@@ -24,11 +24,21 @@ export const useReportService = (timelineRef: Ref, todoRef: Ref) => {
     }
   }
 
+  /** レポートをリストから削除する */
+  const removeList = (report: Report) => {
+    if (report?.startAt) {
+      timelineService.removeList(report)
+    } else {
+      todoService.removeList(report)
+    }
+  }
+
   return {
     timeline: timelineService,
     todo: todoService,
 
     updateList,
+    removeList,
   }
 }
 

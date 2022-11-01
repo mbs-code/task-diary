@@ -6,16 +6,24 @@ export const useReportAction = (service: ReturnType<typeof useReportService>) =>
   const confirm = useConfirm()
   const dayjs = useDayjs()
 
-  /** テキストのみ更新する */
-  const onUpdateText = async (text: string, report: Report, onDone?: () => void) => {
+  /** TODO 要素にする */
+  const onSwitchTodo = async (report: Report) => {
     const form = {
       ...report,
-      text,
+      startAt: null,
     }
     const updReport = await ReportAPI.update(report.id, form)
-    service.updateList(updReport)
+    service.updateList(updReport, report)
+  }
 
-    onDone && onDone()
+  /** タスク要素にする */
+  const onSwitchTask = async (report: Report) => {
+    const form = {
+      ...report,
+      startAt: dayjs(),
+    }
+    const updReport = await ReportAPI.update(report.id, form)
+    service.updateList(updReport, report)
   }
 
   /** 星をトグルする */
@@ -25,7 +33,7 @@ export const useReportAction = (service: ReturnType<typeof useReportService>) =>
       isStar: !report.isStar,
     }
     const updReport = await ReportAPI.update(report.id, form)
-    service.updateList(updReport)
+    service.updateList(updReport, report)
   }
 
   /** レポートの削除 */
@@ -42,7 +50,7 @@ export const useReportAction = (service: ReturnType<typeof useReportService>) =>
         acceptClass: 'p-button-danger',
         accept: async () => {
           await ReportAPI.remove(report.id)
-          service.updateList(report)
+          service.removeList(report)
 
           resolve()
         },
@@ -53,7 +61,8 @@ export const useReportAction = (service: ReturnType<typeof useReportService>) =>
   }
 
   return {
-    onUpdateText,
+    onSwitchTodo,
+    onSwitchTask,
     onToggleStar,
 
     onDelete,
