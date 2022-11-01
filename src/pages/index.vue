@@ -10,6 +10,12 @@
           @click="onSeed"
         />
 
+        <Button
+          class="p-button-plain p-button-text !w-8 !h-8"
+          icon="pi pi-circle"
+          @click="onFresh"
+        />
+
         <div class="flex-grow" name="padding" />
 
         <Button
@@ -135,11 +141,21 @@ const openProjectEditDialog = () => {
 }
 
 /// ////////////////////////////////////////
-// デバッグ用シード
+// デバッグ用
 
 const onSeed = async () => {
   console.log('seed')
   const database = useDatabase()
   await database.testSeed()
+
+  location.reload()
+}
+
+const onFresh = async () => {
+  console.log('fresh')
+  const database = useDatabase()
+  await database.dbWipe()
+
+  location.reload()
 }
 </script>
