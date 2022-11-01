@@ -34,7 +34,7 @@
     </div>
 
     <div class="ml-9rem">
-      <Button class="w-full" label="新規作成" @click="onCreate" />
+      <Button class="w-full p-button-outlined" icon="pi pi-pencil" label="新規作成" @click="onCreate" />
     </div>
 
     <Menu ref="cardMenuRef" :model="menuItems" :popup="true" />

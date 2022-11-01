@@ -75,7 +75,12 @@
         />
       </div>
 
-      <Textarea v-model="form.text" class="max-w-full" rows="5" />
+      <Textarea
+        ref="textareaRef"
+        v-model="form.text"
+        class="max-w-full"
+        rows="5"
+      />
     </div>
 
     <template #footer>
@@ -120,8 +125,21 @@ const visible = computed({
   set: (val: boolean) => emit('update:visible', val),
 })
 
+const textareaRef = ref()
 watch(() => props.visible, (val) => {
-  if (val) { onInit() }
+  if (val) {
+    onInit()
+
+    // フォーカス
+    nextTick(() => {
+      const textarea = textareaRef.value.$el
+      if (textarea) {
+        const len = textarea.value.length
+        textarea.focus()
+        textarea.setSelectionRange(len, len)
+      }
+    })
+  }
 })
 
 /// ////////////////////////////////////////
