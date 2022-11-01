@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col gap-1">
+  <div class="flex flex-col gap-4">
     <template v-for="report of reportService.todo.reports.value" :key="report.id">
-      <ReportTodoAccordion
+      <ReportCard
         :report="report"
         @open:menu="openCardMenu"
       />

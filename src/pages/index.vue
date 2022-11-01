@@ -54,7 +54,7 @@
           ref="todoRef"
           class="overflow-y-scroll"
         >
-          <ReportTodoList
+          <ReportTodoTray
             class="p-4"
             @edit:report="openReportEditDialog"
           />
