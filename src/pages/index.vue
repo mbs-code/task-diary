@@ -16,16 +16,44 @@
           icon="pi pi-hourglass"
           @click="onSeed"
         />
+
+        <div class="w-1" name="padding" />
+
+        <Button
+          v-if="!showTodoPanel"
+          class="p-button-plain p-button-text !w-8 !h-8"
+          icon="pi pi-caret-left"
+          @click="showTodoPanel = true"
+        />
+
+        <Button
+          v-if="showTodoPanel"
+          class="p-button-plain p-button-text !w-8 !h-8"
+          icon="pi pi-caret-right"
+          @click="showTodoPanel = false"
+        />
       </template>
 
-      <Splitter class="!bg-inherit !border-0 bg" style="height: calc(100vh - 40px)">
-        <SplitterPanel ref="timelineRef" class="min-w-200px overflow-y-scroll">
+      <Splitter
+        :gutter-size="6"
+        class="!bg-inherit !border-0 bg"
+        style="height: calc(100vh - 40px)"
+      >
+        <SplitterPanel
+          ref="timelineRef"
+          class="min-w-200px overflow-y-scroll"
+        >
           <ReportTimeline
             class="p-4"
             @edit:report="openReportEditDialog"
           />
         </SplitterPanel>
-        <SplitterPanel ref="todoRef" class="overflow-y-scroll">
+
+        <SplitterPanel
+          v-if="showTodoPanel"
+          ref="todoRef"
+          class="overflow-y-scroll"
+        >
           <ReportTodoList
             class="p-4"
             @edit:report="openReportEditDialog"
@@ -54,6 +82,8 @@ const projects = ref<Project[]>([])
 onMounted(async () => {
   projects.value = await ProjectAPI.getAll()
 })
+
+const showTodoPanel = ref<boolean>(true)
 
 /// ////////////////////////////////////////
 // サービス系
