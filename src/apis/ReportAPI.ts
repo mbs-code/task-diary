@@ -1,12 +1,21 @@
+import { Dayjs } from 'dayjs'
+import { SelectQueryBuilder } from 'kysely'
+import { From } from 'kysely/dist/cjs/parser/table-parser'
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
 import { StatusAPI } from '~~/src/apis/StatusAPI'
 import { useDatabase } from '~~/src/composables/useDatabase'
 import { useDayjs } from '~~/src/composables/useDayjs'
 import { DBReport, formatReport, FormReport, parseReport, Report } from '~~/src/databases/models/Report'
+import { Tables } from '~~/src/databases/Tables'
 
 export type SearchReport = {
-  text?: string
   in?: number[] // id配列で取得
+  notin?: number[] // id配列で除外
+  text?: string
+  onlyTask?: boolean // タスク要素
+  onlyTodo?: boolean // TO-DO要素
+  until?: Dayjs // この時間以前(含む)
+  since?: Dayjs // この日以降(含む)
   page?: number
   limit?: number
   sorts?: [keyof DBReport, 'asc' | 'desc'][]
@@ -16,10 +25,15 @@ export class ReportAPI {
   protected static getSearchQuery (search?: SearchReport) {
     const { db } = useDatabase()
 
-    const query = db
+    const query: SelectQueryBuilder<From<Tables, 'reports'>, 'reports', {}> = db
       .selectFrom('reports')
-      .if(Boolean(search?.text), qb => qb.where('text', 'like', `%${search.text}%`))
       .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
+      .if(Boolean(search?.notin), qb => qb.where('id', 'not in', search.notin))
+      .if(Boolean(search?.text), qb => qb.where('text', 'like', `%${search.text}%`))
+      .if(Boolean(search?.onlyTask), qb => qb.where('start_at', 'is not', null))
+      .if(Boolean(search?.onlyTodo), qb => qb.where('start_at', 'is', null))
+      .if(Boolean(search?.until), qb => qb.where('start_at', '<=', search.until.toISOString()))
+      .if(Boolean(search?.since), qb => qb.where('start_at', '>=', search.until.toISOString()))
 
     // NOTE: page limit sorts など、countに影響しないものは実装しない
     return { db, query }
@@ -35,15 +49,15 @@ export class ReportAPI {
   }
 
   public static async getAll (search?: SearchReport): Promise<Report[]> {
-    const { query } = this.getSearchQuery()
+    const { query } = this.getSearchQuery(search)
 
     // 取得
-    const dbReports = await query
+    const dbReports: DBReport[] = await query
       .selectAll()
       .if(Boolean(search?.page) && Boolean(search.limit), qb => qb.offset((search.page - 1) * search.limit))
       .if(Boolean(search?.limit), qb => qb.limit(search.limit))
       .if(Boolean(search?.sorts), qb => search.sorts.reduce(
-        (qb2, sort) => qb2.orderBy(sort[0], sort[1]), qb)
+        (qb2, sort) => qb2.orderBy(sort[0], sort[1]), qb),
       )
       .execute()
 
@@ -88,10 +102,10 @@ export class ReportAPI {
     // リレーション紐づけ
     return {
       ...report,
-      project: report.project
+      project: report.projectId
         ? await ProjectAPI.get(report.projectId)
         : undefined,
-      status: report.status
+      status: report.statusId
         ? await StatusAPI.get(report.statusId)
         : undefined,
     }

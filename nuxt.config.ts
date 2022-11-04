@@ -6,12 +6,30 @@ export default defineNuxtConfig({
   srcDir: 'src/',
   ssr: false,
 
+  css: [
+    'primevue/resources/themes/bootstrap4-dark-blue/theme.css',
+    'primevue/resources/primevue.css',
+    'primeicons/primeicons.css',
+    '@/assets/index.scss',
+  ],
+
   app: {
     head: {
       script: [
         !isProduct && { src: 'http://localhost:8098' }, // vue devtools
       ],
     },
+  },
+
+  components: [{
+    path: '~/components',
+    pathPrefix: false,
+  }],
+
+  imports: {
+    dirs: [
+      'composables/**',
+    ],
   },
 
   vite: {
@@ -26,7 +44,9 @@ export default defineNuxtConfig({
       sourcemap: !!process.env.TAURI_DEBUG,
     },
 
-    plugins: [eslint({ fix: true })],
+    plugins: [
+      eslint({ fix: true, include: 'src/**/*.{js,ts,vue}' }),
+    ],
   },
 
   modules: [

@@ -8,7 +8,7 @@ export type DBReport = {
   text: string
   project_id?: number // FK
   status_id?: number // FK
-  is_favorite: number // 0, 1
+  is_star: number // 0, 1
   start_at?: string // iso8601 UTC
   end_at?: string // iso8601 UTC
   created_at: string // iso8601 UTC
@@ -20,7 +20,7 @@ export type Report = {
   text: string
   projectId?: number
   statusId?: number
-  isFavorite: boolean
+  isStar: boolean
   startAt?: Dayjs
   endAt?: Dayjs
   createdAt: Dayjs
@@ -34,7 +34,7 @@ export type FormReport = {
   text: string
   projectId?: number
   statusId?: number
-  isFavotite: boolean
+  isStar: boolean
   startAt?: Dayjs
   endAt?: Dayjs
 }
@@ -47,7 +47,7 @@ export const formatReport = (db: DBReport): Report => {
     text: db.text,
     projectId: db.project_id,
     statusId: db.status_id,
-    isFavorite: Boolean(db.is_favorite),
+    isStar: Boolean(db.is_star),
     startAt: db.start_at ? dayjs(db.start_at) : undefined,
     endAt: db.end_at ? dayjs(db.end_at) : undefined,
     createdAt: dayjs(db.created_at),
@@ -66,7 +66,7 @@ export const parseReport = (form: FormReport): Partial<DBReport> => {
     text: form.text,
     project_id: form.projectId,
     status_id: form.statusId,
-    is_favorite: form.isFavotite ? 1 : 0,
+    is_star: form.isStar ? 1 : 0,
     start_at: form.startAt
       ? dayjs(form.startAt).toISOString()
       : null,

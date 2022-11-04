@@ -3,7 +3,7 @@ import {
   Driver,
   DatabaseConnection,
   CompiledQuery,
-  QueryResult
+  QueryResult,
 } from 'kysely'
 import TauriDatabase from 'tauri-plugin-sql-api'
 import { TauriSqliteDialectConfig } from './TauriSqliteDialectConfig'
@@ -76,7 +76,7 @@ class TauriSqliteConnection implements DatabaseConnection {
       const res = await this.#db.select(sql, parameters as unknown[])
 
       return {
-        rows: res as unknown as O[]
+        rows: res as unknown as O[],
       }
     } else {
       const res = await this.#db.execute(sql, parameters as unknown[])
@@ -84,7 +84,7 @@ class TauriSqliteConnection implements DatabaseConnection {
       return {
         numUpdatedOrDeletedRows: BigInt(res.rowsAffected),
         insertId: BigInt(res.lastInsertId),
-        rows: []
+        rows: [],
       }
     }
   }

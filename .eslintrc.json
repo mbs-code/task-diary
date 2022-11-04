@@ -13,8 +13,10 @@
   ],
   "rules": {
     "quotes": ["warn", "single"],
-    "comma-dangle": ["warn", "only-multiline"],
+    "comma-dangle": ["warn", "always-multiline"],
     "@typescript-eslint/no-unused-vars": "warn",
+    "vue/no-unused-vars": "warn",
+    "require-await": "warn",
     "vue/no-v-model-argument": "off",
     "vue/no-v-for-template-key": "off"
   }

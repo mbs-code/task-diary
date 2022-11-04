@@ -1,6 +1,9 @@
+import { SelectQueryBuilder } from 'kysely'
+import { From } from 'kysely/dist/cjs/parser/table-parser'
 import { useDatabase } from '~~/src/composables/useDatabase'
 import { useDayjs } from '~~/src/composables/useDayjs'
 import { DBProject, formatProject, FormProject, parseProject, Project } from '~~/src/databases/models/Project'
+import { Tables } from '~~/src/databases/Tables'
 
 export type SearchProject = {
   text?: string
@@ -14,7 +17,7 @@ export class ProjectAPI {
   protected static getSearchQuery (search?: SearchProject) {
     const { db } = useDatabase()
 
-    const query = db
+    const query: SelectQueryBuilder<From<Tables, 'projects'>, 'projects', {}> = db
       .selectFrom('projects')
       .if(Boolean(search?.text), qb => qb.where('name', 'like', `%${search.text}%`))
       .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
@@ -33,15 +36,15 @@ export class ProjectAPI {
   }
 
   public static async getAll (search?: SearchProject): Promise<Project[]> {
-    const { query } = this.getSearchQuery()
+    const { query } = this.getSearchQuery(search)
 
     // 取得
-    const dbProjects = await query
+    const dbProjects: DBProject[] = await query
       .selectAll()
       .if(Boolean(search?.page) && Boolean(search.limit), qb => qb.offset((search.page - 1) * search.limit))
       .if(Boolean(search?.limit), qb => qb.limit(search.limit))
       .if(Boolean(search?.sorts), qb => search.sorts.reduce(
-        (qb2, sort) => qb2.orderBy(sort[0], sort[1]), qb)
+        (qb2, sort) => qb2.orderBy(sort[0], sort[1]), qb),
       )
       .execute()
 

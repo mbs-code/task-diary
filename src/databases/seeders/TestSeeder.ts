@@ -1,4 +1,4 @@
-// eslint-disablee @typescript-eslint/no-unused-vars
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { StatusAPI } from '~~/src/apis/StatusAPI'
@@ -27,6 +27,11 @@ export const testSeeder = async () => {
 
   const p4 = await ProjectAPI.create({
     name: 'Tips',
+    icon: '😎',
+  })
+
+  const p5 = await ProjectAPI.create({
+    name: 'Sample',
   })
 
   /// ////////////////////////////////////////
@@ -54,7 +59,7 @@ export const testSeeder = async () => {
     text: 'サンプルテキストです\n・あいうえお\n・かきくけこ\n・さしすせそ',
     projectId: p1.id,
     statusId: s1.id,
-    isFavotite: true,
+    isStar: true,
     startAt: dayjs('2022-10-19 10:12:33'),
     endAt: dayjs('2022-10-19 12:01:00'),
   })
@@ -64,7 +69,7 @@ export const testSeeder = async () => {
       'quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas!',
     projectId: p2.id,
     statusId: undefined,
-    isFavotite: false,
+    isStar: false,
     startAt: dayjs('2022-10-19 13:00:33'),
   })
 
@@ -74,7 +79,7 @@ export const testSeeder = async () => {
       'この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。',
     projectId: p4.id,
     statusId: s2.id,
-    isFavotite: false,
+    isStar: false,
     startAt: dayjs('2022-10-19 13:00:33'),
   })
 
@@ -82,13 +87,26 @@ export const testSeeder = async () => {
     text: '〇〇を△にする作業\n・見る\n・調べる\n・作る\n\nどうよ。',
     projectId: p1.id,
     statusId: s2.id,
-    isFavotite: false,
+    isStar: false,
   })
 
   const r5 = await ReportAPI.create({
     text: 'tips tips tips tips\ntips tips tips tips\ntips tips tips tips',
     projectId: p4.id,
     statusId: s2.id,
-    isFavotite: true,
+    isStar: true,
   })
+
+  // 一日5件くらい適当に
+  let base = dayjs('2022-10-01')
+  for (let i = 0; i < 20; i++) {
+    await ReportAPI.create({
+      text: base.format('YYYY-MM-dd HH:mm:ss のメモ'),
+      projectId: p5.id,
+      isStar: false,
+      startAt: base.clone(),
+    })
+
+    base = base.add(8, 'hours')
+  }
 }

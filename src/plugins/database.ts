@@ -7,17 +7,15 @@ import { Tables } from '~~/src/databases/Tables'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const path = 'sqlite:./test.db'
+  const debug = true
 
   const db = new Kysely<Tables>({
-    dialect: new TauriSqliteDialect({
-      path,
-      debug: false,
-    })
+    dialect: new TauriSqliteDialect({ path, debug }),
   })
 
   const migrator = new Migrator({
     db,
-    provider: new BuildinMigrationProvider(migrations)
+    provider: new BuildinMigrationProvider(migrations),
   })
 
   nuxtApp.provide('db', db)

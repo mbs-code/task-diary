@@ -26,7 +26,7 @@ export async function up (db: Kysely<unknown>): Promise<void> {
     .addColumn('text', 'text', col => col.notNull())
     .addColumn('project_id', 'integer') // FK
     .addColumn('status_id', 'integer') // FK
-    .addColumn('is_favorite', 'integer', col => col.notNull().defaultTo(0))
+    .addColumn('is_star', 'integer', col => col.notNull().defaultTo(0))
     .addColumn('start_at', 'datetime')
     .addColumn('end_at', 'datetime')
     .addColumn('created_at', 'datetime', col => col.notNull())
