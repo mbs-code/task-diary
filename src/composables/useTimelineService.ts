@@ -110,6 +110,12 @@ export const useTimelineService = () => {
     }
   }
 
+  const clear = () => {
+    dayReports.value = []
+    oldestStartAt.value = undefined
+    oldestIds.value = []
+  }
+
   return {
     dayReports,
 
@@ -119,5 +125,7 @@ export const useTimelineService = () => {
 
     replaceList,
     removeList,
+
+    clear,
   }
 }

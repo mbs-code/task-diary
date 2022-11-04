@@ -82,6 +82,7 @@
 
       <ProjectEditDialog
         v-model:visible="showProjectEditDialog"
+        @update:project="onInit"
       />
     </NuxtLayout>
   </div>
@@ -114,16 +115,21 @@ const reportAction = useReportAction(reportService)
 provide(ReportServiceKey, reportService)
 provide(ReportActionKey, reportAction)
 
-onMounted(async () => {
+const projectService = useProjectService()
+provide(ProjectServiceKey, projectService)
+
+const onInit = async () => {
+  reportService.timeline.clear()
+  reportService.todo.clear()
+
   await reportService.timeline.fetchList()
   await reportService.todo.fetchList()
 
   const tl = timelineRef.value.$el
   tl?.scrollTo(0, tl.scrollHeight)
-})
+}
 
-const projectService = useProjectService()
-provide(ProjectServiceKey, projectService)
+onMounted(() => onInit())
 
 /// ////////////////////////////////////////
 // ダイアログ系

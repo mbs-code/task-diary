@@ -34,6 +34,11 @@ export const useTodoService = () => {
     }
   }
 
+  const clear = () => {
+    reports.value = []
+    page.value = 1
+  }
+
   return {
     reports,
     page,
@@ -42,5 +47,7 @@ export const useTodoService = () => {
 
     replaceList,
     removeList,
+
+    clear,
   }
 }
