@@ -2,6 +2,7 @@
   <Dialog
     v-model:visible="visible"
     class="p-dialog-maximized"
+    content-class="!p-0"
     modal
   >
     <template #header>
@@ -10,38 +11,52 @@
 
     <DataTable
       v-model:editingRows="editingRows"
+      class="p-datatable-sm"
       :value="projects"
       edit-mode="row"
       data-key="id"
       responsive-layout="scroll"
+      scrollable
+      scroll-height="calc(100vh - 52px)"
     >
-      <Column field="id" header="ID">
-        <!-- <template #editor="{ data, field }">
-          <InputText v-model="data[field]" />
-        </template> -->
-      </Column>
+      <Column field="id" header="ID" header-class="justify-center w-4rem max-w-4rem" body-class="justify-center w-4rem max-w-4rem" />
 
-      <Column field="name" header="プロジェクト名">
+      <Column field="name" header="プロジェクト名" body-class="min-w-10rem">
         <template #editor="{ data, field }">
-          <InputText v-model="data[field]" />
+          <InputText v-model="data[field]" class="w-full" />
         </template>
       </Column>
 
-      <Column field="icon" header="アイコン">
+      <Column field="icon" header="アイコン" body-class="min-w-10rem">
+        <template #body="{ data }">
+          <Avatar
+            class="!w-6 !h-6"
+            :label="data?.icon"
+            :style="{ backgroundColor: data?.color }"
+          />
+        </template>
+
         <template #editor="{ data, field }">
-          <InputText v-model="data[field]" />
+          <InputText v-model="data[field]" class="w-full" />
         </template>
       </Column>
 
-      <Column field="color" header="色">
+      <Column field="color" header="色" body-class="min-w-10rem">
+        <template #body="{ data }">
+          <template v-if="data.color">
+            <span class="mr-2" :style="{ color: data.color }">●</span>
+            <span>{{ data.color }}</span>
+          </template>
+        </template>
+
         <template #editor="{ data, field }">
-          <InputText v-model="data[field]" />
+          <InputText v-model="data[field]" class="w-full" />
         </template>
       </Column>
 
-      <Column>
+      <Column header-class="justify-center w-8rem max-w-8rem" body-class="justify-center w-8rem max-w-8rem">
         <template #header>
-          <Button icon="pi pi-plus" class="p-button-rounded p-button-text p-button-plain" @click="onRowAdd" />
+          <Button icon="pi pi-plus" class="p-button-rounded p-button-text p-button-plain" @click="onRowAdd()" />
         </template>
 
         <template #body="{ data }">
