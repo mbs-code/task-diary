@@ -20,6 +20,12 @@
 
         <Button
           class="p-button-plain p-button-text !w-8 !h-8"
+          icon="pi pi-sync"
+          @click="onReload"
+        />
+
+        <Button
+          class="p-button-plain p-button-text !w-8 !h-8"
           icon="pi pi-file-edit"
           @click="openReportEditDialog(undefined)"
         />
@@ -144,6 +150,10 @@ const openProjectEditDialog = () => {
 
 /// ////////////////////////////////////////
 // デバッグ用
+
+const onReload = () => {
+  window.location.reload()
+}
 
 const onSeed = async () => {
   console.log('seed')
