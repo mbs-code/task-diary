@@ -2,6 +2,8 @@
   <div
     class="flex flex-col gap-3"
     @keydown.ctrl.s.stop="onSave"
+    @keydown.ctrl.enter.stop="onSave"
+    @keydown.alt.enter.stop="onSave"
   >
     <!-- @keydown.esc.stop="switchViewMode" -->
     <!-- ヘッダ -->
