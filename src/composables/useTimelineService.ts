@@ -4,31 +4,22 @@ import { Report } from '~~/src/databases/models/Report'
 
 export type DayReport = { key: string, date: Dayjs, reports: Report[] }
 
-type InfiniteState = {
-  loaded: () => void
-  complete: () => void
-  error: () => void
-}
-
 export const useTimelineService = () => {
+  const dayjs = useDayjs()
+
   const dayReports = ref<DayReport[]>([])
   const oldestStartAt = ref<Dayjs>() // 取得した範囲で一番古い情報
   const oldestIds = ref<number[]>([]) // 上の該当ID
 
-  const onLoadPrev = async ($state: InfiniteState) => {
+  const onLoadPrev = async () => {
     // 前の要素を取ってくる
-    console.log('prev')
-    const cnt = await fetchList()
-    if (cnt > 0) {
-      $state.loaded()
-    } else {
-      $state.complete()
-    }
+    const _cnt = await fetchList()
+    // TODO: 完了したらトースト
+    // if (cnt > 0) {
   }
 
   const onLoadNext = () => {
     // 次の要素を取ってくる
-    console.log('next')
   }
 
   const fetchList = async () => {
@@ -67,7 +58,7 @@ export const useTimelineService = () => {
 
   const replaceList = (report: Report) => {
     // 日付で探索する
-    const baseDate = report.startAt.clone().startOf('date')
+    const baseDate = report.startAt?.clone().startOf('date') ?? dayjs()
     const targetDay = dayReports.value.find(dr => dr.date.isSame(baseDate, 'date'))
 
     if (targetDay) {
@@ -79,7 +70,7 @@ export const useTimelineService = () => {
       } else {
         // ない場合は追加してソートする
         targetDay.reports.push(report)
-        targetDay.reports.sort((a, b) => a.startAt.isAfter(b.startAt) ? 1 : -1) // 日付順
+        targetDay.reports.sort((a, b) => a.startAt?.isAfter(b.startAt) ? 1 : -1) // 日付順
       }
     } else {
       // 日付が無いならば、新規に作成してソート
@@ -90,11 +81,11 @@ export const useTimelineService = () => {
 
   const removeList = (report: Report) => {
     // 日付で探索する
-    const baseDate = report?.startAt.clone().startOf('date')
+    const baseDate = report.startAt?.clone().startOf('date')
     const targetDayIndex = dayReports.value.findIndex(dr => dr.date.isSame(baseDate, 'date'))
 
     if (targetDayIndex >= 0) {
-      const targetDay = dayReports.value.at(targetDayIndex)
+      const targetDay = dayReports.value[targetDayIndex]
 
       // 日付が作成済みなら
       const ownIdIdx = targetDay.reports.findIndex(r => r.id === report.id)

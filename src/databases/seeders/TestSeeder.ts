@@ -99,7 +99,7 @@ export const testSeeder = async () => {
 
   // 一日5件くらい適当に
   let base = dayjs('2022-10-01')
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 60; i++) {
     await ReportAPI.create({
       text: base.format('YYYY-MM-dd HH:mm:ss のメモ'),
       projectId: p5.id,
@@ -107,6 +107,6 @@ export const testSeeder = async () => {
       startAt: base.clone(),
     })
 
-    base = base.add(8, 'hours')
+    base = base.add(6, 'hours')
   }
 }

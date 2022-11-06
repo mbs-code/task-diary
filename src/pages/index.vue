@@ -132,7 +132,17 @@ const onInit = async () => {
   tl?.scrollTo(0, tl.scrollHeight)
 }
 
-onMounted(() => onInit())
+onMounted(() => {
+  // 初回ロード
+  onInit()
+
+  // TL自動更新用
+  useInfiniteScroll(
+    () => timelineRef.value.$el,
+    () => reportService.timeline.onLoadPrev(),
+    { distance: 10, direction: 'top' },
+  )
+})
 
 /// ////////////////////////////////////////
 // ダイアログ系

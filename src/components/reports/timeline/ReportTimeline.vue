@@ -1,7 +1,5 @@
 <template>
   <div class="flex flex-col gap-8">
-    <InfiniteLoading @infinite="reportService.timeline.onLoadPrev" />
-
     <div
       v-for="dayReport of reportService.timeline.dayReports.value"
       :key="dayReport.key"
@@ -42,9 +40,7 @@
 
 <script setup lang="ts">
 import { MenuItem } from 'primevue/menuitem'
-import InfiniteLoading from 'v3-infinite-loading'
 import { Report } from '~~/src/databases/models/Report'
-import 'v3-infinite-loading/lib/style.css'
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
