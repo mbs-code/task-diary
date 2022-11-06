@@ -3,6 +3,9 @@
     v-model:visible="visible"
     class="w-[600px]"
     modal
+    @keydown.ctrl.s.stop="onSave"
+    @keydown.ctrl.enter.stop="onSave"
+    @keydown.alt.enter.stop="onSave"
   >
     <template #header>
       <h3>{{ isEdit ? "編集" : '新規作成' }}</h3>

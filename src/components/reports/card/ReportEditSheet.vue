@@ -5,7 +5,6 @@
     @keydown.ctrl.enter.stop="onSave"
     @keydown.alt.enter.stop="onSave"
   >
-    <!-- @keydown.esc.stop="switchViewMode" -->
     <!-- ヘッダ -->
     <div class="flex items-center gap-2 text-2xl">
       <ProjectDropdown
