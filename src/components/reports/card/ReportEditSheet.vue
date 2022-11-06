@@ -2,8 +2,9 @@
   <div
     class="flex flex-col gap-3"
     @keydown.ctrl.s.stop="onSave"
+    @keydown.ctrl.enter.stop="onSave"
+    @keydown.alt.enter.stop="onSave"
   >
-    <!-- @keydown.esc.stop="switchViewMode" -->
     <!-- ヘッダ -->
     <div class="flex items-center gap-2 text-2xl">
       <ProjectDropdown
@@ -50,8 +51,8 @@ const props = defineProps<{
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (e: 'open:menu', event: MouseEvent, report: Report),
-  (e: 'close'),
+  (e: 'open:menu', event: MouseEvent, report: Report): void,
+  (e: 'close'): void,
 }>()
 
 const reportService = inject(ReportServiceKey)
@@ -102,7 +103,7 @@ const onSave = async () => {
     : await ReportAPI.create(params)
 
   // データの置き換え
-  reportService.updateList(updReport)
+  reportService?.updateList(updReport)
 
   emit('close')
 }

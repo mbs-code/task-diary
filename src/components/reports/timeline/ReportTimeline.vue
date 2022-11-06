@@ -1,9 +1,7 @@
 <template>
   <div class="flex flex-col gap-8">
-    <InfiniteLoading @infinite="reportService.timeline.onLoadPrev" />
-
     <div
-      v-for="dayReport of reportService.timeline.dayReports.value"
+      v-for="dayReport of timeline?.dayReports.value"
       :key="dayReport.key"
       class="flex gap-2"
     >
@@ -42,30 +40,23 @@
 
 <script setup lang="ts">
 import { MenuItem } from 'primevue/menuitem'
-import InfiniteLoading from 'v3-infinite-loading'
 import { Report } from '~~/src/databases/models/Report'
-import 'v3-infinite-loading/lib/style.css'
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (e: 'edit:report', report?: Report),
+  (e: 'edit:report', report?: Partial<Report>): void,
 }>()
 
 const reportService = inject(ReportServiceKey)
 const reportAction = inject(ReportActionKey)
+const timeline = computed(() => reportService?.timeline)
 
 /// ////////////////////////////////////////
 
 const dayjs = useDayjs()
 const onCreate = () => {
-  emit('edit:report', {
-    id: 0,
-    text: '',
-    isStar: false,
-    startAt: dayjs(),
-    createdAt: undefined,
-    updatedAt: undefined,
-  })
+  // 時間だけ確定させて、TASK要素に
+  emit('edit:report', { startAt: dayjs() })
 }
 
 /// ////////////////////////////////////////
@@ -81,12 +72,12 @@ const openCardMenu = (event: MouseEvent, report: Report) => {
 const menuItems = computed<MenuItem[]>(() => {
   const report = selectedReport.value
   if (report) {
-    const isStar = selectedReport.value.isStar
+    const isStar = report.isStar
     return [
       {
         label: 'ToDoに移動',
         icon: 'pi pi-inbox',
-        command: () => reportAction.onSwitchTodo(report),
+        command: () => reportAction?.onSwitchTodo(report),
       },
       {
         label: '編集',
@@ -96,7 +87,7 @@ const menuItems = computed<MenuItem[]>(() => {
       {
         label: isStar ? '星を外す' : '星をつける',
         icon: isStar ? 'pi pi-star' : 'pi pi-star-fill',
-        command: () => reportAction.onToggleStar(report),
+        command: () => reportAction?.onToggleStar(report),
       },
       {
         separator: true,
@@ -105,7 +96,7 @@ const menuItems = computed<MenuItem[]>(() => {
         label: '削除',
         icon: 'pi pi-trash',
         class: 'menu-delete',
-        command: () => reportAction.onDelete(report),
+        command: () => reportAction?.onDelete(report),
       },
     ]
   }

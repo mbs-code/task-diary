@@ -1,7 +1,7 @@
 <template>
   <Dropdown
     v-model="_value"
-    :options="projectService.projects.value"
+    :options="projectService?.projects.value"
     option-label="name"
     :keep-in-viewport="false"
     placeholder="未選択"
@@ -37,13 +37,13 @@
 import { Project } from '~~/src/databases/models/Project'
 
 const props = defineProps<{
-  modelValue: Project,
+  modelValue?: Project,
   titleClass?: string,
 }>()
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (e: 'update:modelValue', modelValue: Project),
+  (e: 'update:modelValue', modelValue?: Project): void,
 }>()
 
 const _value = computed({

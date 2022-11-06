@@ -7,3 +7,5 @@ export type Tables = {
   statuses: DBStatus
   reports: DBReport
 }
+
+export type MetaColumns = 'id' | 'created_at' | 'updated_at'

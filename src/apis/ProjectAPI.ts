@@ -19,8 +19,8 @@ export class ProjectAPI {
 
     const query: SelectQueryBuilder<From<Tables, 'projects'>, 'projects', {}> = db
       .selectFrom('projects')
-      .if(Boolean(search?.text), qb => qb.where('name', 'like', `%${search.text}%`))
-      .if(Boolean(search?.in), qb => qb.where('id', 'in', search.in))
+      .if(Boolean(search?.text), qb => qb.where('name', 'like', `%${search?.text ?? ''}%`))
+      .if(Boolean(search?.in), qb => qb.where('id', 'in', search?.in ?? []))
 
     // NOTE: page limit sorts など、countに影響しないものは実装しない
     return { db, query }
@@ -30,7 +30,7 @@ export class ProjectAPI {
     const { db, query } = this.getSearchQuery(search)
     const { count } = await query
       .select([db.fn.count('id').as('count')])
-      .executeTakeFirst()
+      .executeTakeFirst() as { count: bigint }
 
     return Number(count)
   }
@@ -41,9 +41,11 @@ export class ProjectAPI {
     // 取得
     const dbProjects: DBProject[] = await query
       .selectAll()
-      .if(Boolean(search?.page) && Boolean(search.limit), qb => qb.offset((search.page - 1) * search.limit))
-      .if(Boolean(search?.limit), qb => qb.limit(search.limit))
-      .if(Boolean(search?.sorts), qb => search.sorts.reduce(
+      .if(Boolean(search?.page) && Boolean(search?.limit), qb =>
+        qb.offset(((search?.page ?? 0) - 1) * (search?.limit ?? 0)),
+      )
+      .if(Boolean(search?.limit), qb => qb.limit(search?.limit ?? 0))
+      .if(Boolean(search?.sorts), qb => (search?.sorts ?? []).reduce(
         (qb2, sort) => qb2.orderBy(sort[0], sort[1]), qb),
       )
       .execute()
@@ -78,7 +80,7 @@ export class ProjectAPI {
       .selectFrom('projects')
       .select([db.fn.count('id').as('count')])
       .where('name', '=', parse.name)
-      .executeTakeFirst()
+      .executeTakeFirst() as { count: bigint }
     if (count > 0) { throw new Error('duplicate name') }
 
     // 作成
@@ -107,7 +109,7 @@ export class ProjectAPI {
       .select([db.fn.count('id').as('count')])
       .where('name', '=', parse.name)
       .where('id', '<>', projectId)
-      .executeTakeFirst()
+      .executeTakeFirst() as { count: bigint }
     if (count > 0) { throw new Error('duplicate name') }
 
     // 更新
@@ -136,7 +138,7 @@ export class ProjectAPI {
       .selectFrom('reports')
       .select([db.fn.count('id').as('count')])
       .where('project_id', '=', project.id)
-      .executeTakeFirst()
+      .executeTakeFirst() as { count: bigint }
     if (count > 0) { throw new Error('this has relation') }
 
     // 削除

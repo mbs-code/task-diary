@@ -46,10 +46,11 @@
       </template>
 
       <Splitter
-        ref="mainRef"
-        :gutter-size="6"
-        class="!bg-inherit !border-0 bg"
+        ref="splitterRef"
+        :gutter-size="8"
+        class="!bg-inherit !border-0"
         style="height: calc(100vh - 40px)"
+        @resizeend="splitterHelper.resizeend"
       >
         <SplitterPanel
           ref="timelineRef"
@@ -75,7 +76,7 @@
 
       <ReportEditDialog
         v-model:visible="showReportEditDialog"
-        :report="selectedReport"
+        :base-report="selectedReport"
         :projects="projects"
         @update:report="reportService.updateList"
       />
@@ -89,7 +90,6 @@
 </template>
 
 <script setup lang="ts">
-import Splitter from 'primevue/splitter'
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
 import { Project } from '~~/src/databases/models/Project'
 import { Report } from '~~/src/databases/models/Report'
@@ -103,13 +103,16 @@ onMounted(async () => {
 
 const showTodoPanel = ref<boolean>(true)
 
+const splitterRef = ref()
+const timelineRef = ref()
+const todoRef = ref()
+
+const splitterHelper = useSplitterHandler(splitterRef)
+
 /// ////////////////////////////////////////
 // サービス系
 
-const mainRef = ref()
-const timelineRef = ref()
-const todoRef = ref()
-const reportService = useReportService(mainRef, timelineRef, todoRef)
+const reportService = useReportService(splitterRef, timelineRef, todoRef)
 const reportAction = useReportAction(reportService)
 
 provide(ReportServiceKey, reportService)
@@ -129,14 +132,24 @@ const onInit = async () => {
   tl?.scrollTo(0, tl.scrollHeight)
 }
 
-onMounted(() => onInit())
+onMounted(() => {
+  // 初回ロード
+  onInit()
+
+  // TL自動更新用
+  useInfiniteScroll(
+    () => timelineRef.value.$el,
+    () => reportService.timeline.onLoadPrev(),
+    { distance: 10, direction: 'top' },
+  )
+})
 
 /// ////////////////////////////////////////
 // ダイアログ系
 
-const selectedReport = ref<Report>()
+const selectedReport = ref<Partial<Report>>()
 const showReportEditDialog = ref<boolean>(false)
-const openReportEditDialog = (report?: Report) => {
+const openReportEditDialog = (report?: Partial<Report>) => {
   selectedReport.value = report
   showReportEditDialog.value = true
 }

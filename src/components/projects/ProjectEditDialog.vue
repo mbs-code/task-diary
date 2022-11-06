@@ -30,27 +30,19 @@
       <Column field="icon" header="アイコン" body-class="min-w-10rem">
         <template #body="{ data }">
           <Avatar
-            class="!w-6 !h-6"
+            class="!w-6 !h-6 mr-2"
             :label="data?.icon"
             :style="{ backgroundColor: data?.color }"
           />
+
+          <span>{{ data?.color ?? '---' }}</span>
         </template>
 
         <template #editor="{ data, field }">
-          <InputText v-model="data[field]" class="w-full" />
-        </template>
-      </Column>
+          <InputText v-model="data[field]" class="mr-4 w-full" placeholder="文字列" />
 
-      <Column field="color" header="色" body-class="min-w-10rem">
-        <template #body="{ data }">
-          <template v-if="data.color">
-            <span class="mr-2" :style="{ color: data.color }">●</span>
-            <span>{{ data.color }}</span>
-          </template>
-        </template>
-
-        <template #editor="{ data, field }">
-          <InputText v-model="data[field]" class="w-full" />
+          <ColorPicker v-model="data['color']" class="mx-2" />
+          <InputText v-model="data['color']" class="w-6rem" placeholder="色" />
         </template>
       </Column>
 
@@ -85,8 +77,8 @@ const props = defineProps<{
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (e: 'update:visible', visible: boolean),
-  (e: 'update:project', project: Project, old?: Project),
+  (e: 'update:visible', visible: boolean): void,
+  (e: 'update:project', project: Project, old?: Partial<Project>): void,
 }>()
 
 const visible = computed({
@@ -98,12 +90,12 @@ const projectService = inject(ProjectServiceKey)
 
 /// ////////////////////////////////////////
 
-const projects = ref<Project[]>([])
-const editingRows = ref<Project[]>([])
+const projects = ref<Partial<Project>[]>([])
+const editingRows = ref<Partial<Project>[]>([])
 
 const init = () => {
   editingRows.value = []
-  projects.value = [...projectService.projects.value]
+  projects.value = [...(projectService?.projects.value ?? [])]
 }
 
 watch(() => props.visible, (val) => {
@@ -120,12 +112,7 @@ const onRowAdd = () => {
   // 新規rowがなければ追加
   const hasNewRow = projects.value.some(p => p.id === 0)
   if (!hasNewRow) {
-    const newProject = {
-      id: 0,
-      name: '',
-      createdAt: undefined,
-      updatedAt: undefined,
-    }
+    const newProject = { id: 0 }
     projects.value.push(newProject)
     editingRows.value = [...editingRows.value, newProject]
   }
@@ -161,10 +148,10 @@ const onRowEditSave = async (project: Project) => {
     : await ProjectAPI.create(params)
 
   // 画面更新
-  projectService.fetch()
+  projectService?.fetch()
   init()
 
-  const oldProject = editingRows.value.find(row => row.id === project.id)
-  emit('update:project', updProject, oldProject)
+  const base = editingRows.value.find(row => row.id === project.id)
+  emit('update:project', updProject, base)
 }
 </script>

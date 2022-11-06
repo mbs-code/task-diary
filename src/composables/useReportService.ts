@@ -10,13 +10,13 @@ export const useReportService = (
   const todoService = useTodoService()
 
   /** レポートをリストに追加・更新する */
-  const updateList = (report: Report, oldReport?: Report) => {
+  const updateList = (report: Report, base?: Partial<Report>) => {
     // 過去のレポートがあるなら一旦削除する
-    if (oldReport) {
-      if (oldReport?.startAt) {
-        timelineService.removeList(oldReport)
+    if (base?.id) {
+      if (base?.startAt) {
+        timelineService.removeList(base)
       } else {
-        todoService.removeList(oldReport)
+        todoService.removeList(base)
       }
     }
 

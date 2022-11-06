@@ -1,18 +1,19 @@
 import { Dayjs } from 'dayjs'
 import { useDayjs } from '~~/src/composables/useDayjs'
+import { MetaColumns } from '~~/src/databases/Tables'
 
 export type DBProject = {
-  id: number
-  name: string
-  color?: string
-  icon?: string
+  id?: number
+  name: string // required
+  color: string | null
+  icon: string | null
   created_at: string // iso8601 UTC
   updated_at: string // iso8601 UTC
 }
 
 export type Project = {
   id: number
-  name: string
+  name: string // required
   color?: string
   icon?: string
   createdAt: Dayjs
@@ -29,16 +30,16 @@ export const formatProject = (db: DBProject): Project => {
   const dayjs = useDayjs()
 
   return {
-    id: db.id,
+    id: db.id as number,
     name: db.name,
-    color: db.color,
-    icon: db.icon,
+    color: db.color ?? undefined,
+    icon: db.icon ?? undefined,
     createdAt: dayjs(db.created_at),
     updatedAt: dayjs(db.updated_at),
   }
 }
 
-export const parseProject = (form: FormProject): Partial<DBProject> => {
+export const parseProject = (form: FormProject): Omit<DBProject, MetaColumns> => {
   // 簡易バリデ
   const name = form.name?.trim()
   if (!name) { throw new Error('name is empty') }
@@ -47,7 +48,7 @@ export const parseProject = (form: FormProject): Partial<DBProject> => {
 
   return {
     name: form.name,
-    color: form.color,
-    icon: form.icon,
+    color: form.color ?? null,
+    icon: form.icon ?? null,
   }
 }

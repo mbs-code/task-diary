@@ -3,6 +3,9 @@
     v-model:visible="visible"
     class="w-[600px]"
     modal
+    @keydown.ctrl.s.stop="onSave"
+    @keydown.ctrl.enter.stop="onSave"
+    @keydown.alt.enter.stop="onSave"
   >
     <template #header>
       <h3>{{ isEdit ? "編集" : '新規作成' }}</h3>
@@ -110,14 +113,14 @@ import { Status } from '~~/src/databases/models/Status'
 
 const props = defineProps<{
   visible: boolean,
-  report?: Report,
+  baseReport?: Partial<Report>,
   projects: Project[],
 }>()
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (e: 'update:visible', visible: boolean),
-  (e: 'update:report', report: Report, oldReport?: Report),
+  (e: 'update:visible', visible: boolean): void,
+  (e: 'update:report', report: Report, base?: Partial<Report>): void,
 }>()
 
 const visible = computed({
@@ -145,7 +148,7 @@ watch(() => props.visible, (val) => {
 /// ////////////////////////////////////////
 
 const dayjs = useDayjs()
-const isEdit = computed(() => Boolean(props.report?.id))
+const isEdit = computed(() => Boolean(props.baseReport?.id))
 
 const form = reactive<{
   text: string
@@ -162,11 +165,11 @@ const form = reactive<{
 })
 
 const onInit = () => {
-  form.text = props.report?.text ?? ''
-  form.project = props.report?.project ?? undefined
-  form.status = props.report?.status ?? undefined
-  form.isStar = props.report?.isStar ?? false
-  form.startAt = props.report?.startAt?.toDate() ?? undefined
+  form.text = props.baseReport?.text ?? ''
+  form.project = props.baseReport?.project ?? undefined
+  form.status = props.baseReport?.status ?? undefined
+  form.isStar = props.baseReport?.isStar ?? false
+  form.startAt = props.baseReport?.startAt?.toDate() ?? undefined
 }
 
 const onSave = async () => {
@@ -179,12 +182,12 @@ const onSave = async () => {
   }
 
   // upsert 処理
-  const reportId = props.report?.id
+  const reportId = props.baseReport?.id
   const updReport = reportId
     ? await ReportAPI.update(reportId, params)
     : await ReportAPI.create(params)
 
-  emit('update:report', updReport, props.report)
+  emit('update:report', updReport, props.baseReport)
   visible.value = false
 }
 </script>
