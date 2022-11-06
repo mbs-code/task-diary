@@ -54,6 +54,7 @@
         <template #body="{ data }">
           <template v-if="!isRowEdit(data)">
             <Button icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-plain" @click="onRowEdit(data)" />
+            <Button icon="pi pi-trash" class="p-button-rounded p-button-text p-button-plain" @click="onRowDelete(data)" />
           </template>
 
           <template v-else>
@@ -153,5 +154,23 @@ const onRowEditSave = async (project: Project) => {
 
   const base = editingRows.value.find(row => row.id === project.id)
   emit('update:project', updProject, base)
+}
+
+const confirm = useConfirm()
+const onRowDelete = (project: Project) => {
+  confirm.require({
+    // eslint-disable-next-line no-irregular-whitespace
+    message: `「${project.name}...」\n  のプロジェクトを削除しますか？`,
+    header: '削除の確認',
+    icon: 'pi pi-info-circle',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      await ProjectAPI.remove(project.id)
+
+      // 画面更新
+      projectService?.fetch()
+      init()
+    },
+  })
 }
 </script>
