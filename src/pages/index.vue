@@ -46,10 +46,11 @@
       </template>
 
       <Splitter
-        ref="mainRef"
-        :gutter-size="6"
+        ref="splitterRef"
+        :gutter-size="8"
         class="!bg-inherit !border-0 bg"
         style="height: calc(100vh - 40px)"
+        @resizeend="splitterHelper.resizeend"
       >
         <SplitterPanel
           ref="timelineRef"
@@ -89,7 +90,6 @@
 </template>
 
 <script setup lang="ts">
-import Splitter from 'primevue/splitter'
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
 import { Project } from '~~/src/databases/models/Project'
 import { Report } from '~~/src/databases/models/Report'
@@ -103,13 +103,16 @@ onMounted(async () => {
 
 const showTodoPanel = ref<boolean>(true)
 
+const splitterRef = ref()
+const timelineRef = ref()
+const todoRef = ref()
+
+const splitterHelper = useSplitterHandler(splitterRef)
+
 /// ////////////////////////////////////////
 // サービス系
 
-const mainRef = ref()
-const timelineRef = ref()
-const todoRef = ref()
-const reportService = useReportService(mainRef, timelineRef, todoRef)
+const reportService = useReportService(splitterRef, timelineRef, todoRef)
 const reportAction = useReportAction(reportService)
 
 provide(ReportServiceKey, reportService)
