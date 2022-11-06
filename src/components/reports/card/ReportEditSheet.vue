@@ -50,8 +50,8 @@ const props = defineProps<{
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (e: 'open:menu', event: MouseEvent, report: Report),
-  (e: 'close'),
+  (e: 'open:menu', event: MouseEvent, report: Report): void,
+  (e: 'close'): void,
 }>()
 
 const reportService = inject(ReportServiceKey)
@@ -102,7 +102,7 @@ const onSave = async () => {
     : await ReportAPI.create(params)
 
   // データの置き換え
-  reportService.updateList(updReport)
+  reportService?.updateList(updReport)
 
   emit('close')
 }

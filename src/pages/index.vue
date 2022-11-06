@@ -76,7 +76,7 @@
 
       <ReportEditDialog
         v-model:visible="showReportEditDialog"
-        :report="selectedReport"
+        :base-report="selectedReport"
         :projects="projects"
         @update:report="reportService.updateList"
       />
@@ -147,9 +147,9 @@ onMounted(() => {
 /// ////////////////////////////////////////
 // ダイアログ系
 
-const selectedReport = ref<Report>()
+const selectedReport = ref<Partial<Report>>()
 const showReportEditDialog = ref<boolean>(false)
-const openReportEditDialog = (report?: Report) => {
+const openReportEditDialog = (report?: Partial<Report>) => {
   selectedReport.value = report
   showReportEditDialog.value = true
 }

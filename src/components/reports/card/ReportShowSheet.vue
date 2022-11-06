@@ -35,6 +35,6 @@ defineProps<{
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (e: 'open:menu', event: MouseEvent, report: Report),
+  (e: 'open:menu', event: MouseEvent, report: Report): void,
 }>()
 </script>

@@ -79,7 +79,7 @@ export const useTimelineService = () => {
     }
   }
 
-  const removeList = (report: Report) => {
+  const removeList = (report: Partial<Report>) => {
     // 日付で探索する
     const baseDate = report.startAt?.clone().startOf('date')
     const targetDayIndex = dayReports.value.findIndex(dr => dr.date.isSame(baseDate, 'date'))

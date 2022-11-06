@@ -26,7 +26,7 @@ export const useTodoService = () => {
     }
   }
 
-  const removeList = (report: Report) => {
+  const removeList = (report: Partial<Report>) => {
     const idx = reports.value.findIndex(r => r.id === report.id)
     if (idx >= 0) {
       // あったら消す

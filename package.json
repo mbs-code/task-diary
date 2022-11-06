@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "nuxt dev --host localhost",
     "generate": "nuxt generate",
-    "lint": "eslint --ext .js,.ts,.vue --ignore-path .gitignore",
+    "lint": "eslint src/**/*.{js,ts,vue}",
     "ncu": "npx npm-check-updates -u"
   },
   "devDependencies": {

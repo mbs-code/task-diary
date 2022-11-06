@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-4">
-    <template v-for="report of reportService.todo.reports.value" :key="report.id">
+    <template v-for="report of todo?.reports.value" :key="report.id">
       <ReportCard
         :report="report"
         @open:menu="openCardMenu"
@@ -17,11 +17,12 @@ import { Report } from '~~/src/databases/models/Report'
 
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
-  (e: 'edit:report', report: Report),
+  (e: 'edit:report', report?: Partial<Report>): void,
 }>()
 
 const reportService = inject(ReportServiceKey)
 const reportAction = inject(ReportActionKey)
+const todo = computed(() => reportService?.todo)
 
 /// ////////////////////////////////////////
 // メニュー系
@@ -36,12 +37,12 @@ const openCardMenu = (event: MouseEvent, report: Report) => {
 const menuItems = computed<MenuItem[]>(() => {
   const report = selectedReport.value
   if (report) {
-    const isStar = selectedReport.value.isStar
+    const isStar = report.isStar
     return [
       {
         label: 'タスクに移動',
         icon: 'pi pi-inbox',
-        command: () => reportAction.onSwitchTask(report),
+        command: () => reportAction?.onSwitchTask(report),
       },
       {
         label: '編集',
@@ -51,7 +52,7 @@ const menuItems = computed<MenuItem[]>(() => {
       {
         label: isStar ? '星を外す' : '星をつける',
         icon: isStar ? 'pi pi-star' : 'pi pi-star-fill',
-        command: () => reportAction.onToggleStar(report),
+        command: () => reportAction?.onToggleStar(report),
       },
       {
         separator: true,
@@ -60,7 +61,7 @@ const menuItems = computed<MenuItem[]>(() => {
         label: '削除',
         icon: 'pi pi-trash',
         class: 'menu-delete',
-        command: () => reportAction.onDelete(report),
+        command: () => reportAction?.onDelete(report),
       },
     ]
   }
