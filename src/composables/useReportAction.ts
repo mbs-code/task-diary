@@ -10,7 +10,7 @@ export const useReportAction = (service: ReturnType<typeof useReportService>) =>
   const onSwitchTodo = async (report: Report) => {
     const form = {
       ...report,
-      startAt: null,
+      startAt: undefined,
     }
     const updReport = await ReportAPI.update(report.id, form)
     service.updateList(updReport, report)
