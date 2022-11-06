@@ -13,14 +13,14 @@ export type DBStatus = {
 export type Status = {
   id: number
   name: string
-  color: string | null
+  color?: string
   createdAt: Dayjs
   updatedAt: Dayjs
 }
 
 export type FormStatus = {
   name: string
-  color?: string | null
+  color?: string
 }
 
 export const formatStatus = (db: DBStatus): Status => {
@@ -29,7 +29,7 @@ export const formatStatus = (db: DBStatus): Status => {
   return {
     id: db.id as number,
     name: db.name,
-    color: db.color,
+    color: db.color ?? undefined,
     createdAt: dayjs(db.created_at),
     updatedAt: dayjs(db.updated_at),
   }

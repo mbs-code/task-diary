@@ -19,11 +19,11 @@ export type DBReport = {
 export type Report = {
   id: number
   text: string // required
-  projectId: number | null
-  statusId: number | null
+  projectId?: number
+  statusId?: number
   isStar: boolean
-  startAt: Dayjs | null
-  endAt: Dayjs | null
+  startAt?: Dayjs
+  endAt?: Dayjs
   createdAt: Dayjs
   updatedAt: Dayjs
 
@@ -33,11 +33,11 @@ export type Report = {
 
 export type FormReport = {
   text: string
-  projectId?: number | null
-  statusId?: number | null
+  projectId?: number
+  statusId?: number
   isStar: boolean
-  startAt?: Dayjs | null
-  endAt?: Dayjs | null
+  startAt?: Dayjs
+  endAt?: Dayjs
 }
 
 export const formatReport = (db: DBReport): Report => {
@@ -46,11 +46,15 @@ export const formatReport = (db: DBReport): Report => {
   return {
     id: db.id as number,
     text: db.text,
-    projectId: db.project_id,
-    statusId: db.status_id,
+    projectId: db.project_id ?? undefined,
+    statusId: db.status_id ?? undefined,
     isStar: Boolean(db.is_star),
-    startAt: db.start_at ? dayjs(db.start_at) : null,
-    endAt: db.end_at ? dayjs(db.end_at) : null,
+    startAt: db.start_at
+      ? dayjs(db.start_at)
+      : undefined,
+    endAt: db.end_at
+      ? dayjs(db.end_at)
+      : undefined,
     createdAt: dayjs(db.created_at),
     updatedAt: dayjs(db.updated_at),
   }

@@ -14,16 +14,16 @@ export type DBProject = {
 export type Project = {
   id: number
   name: string // required
-  color: string | null
-  icon: string | null
+  color?: string
+  icon?: string
   createdAt: Dayjs
   updatedAt: Dayjs
 }
 
 export type FormProject = {
   name: string
-  color?: string | null
-  icon?: string | null
+  color?: string
+  icon?: string
 }
 
 export const formatProject = (db: DBProject): Project => {
@@ -32,8 +32,8 @@ export const formatProject = (db: DBProject): Project => {
   return {
     id: db.id as number,
     name: db.name,
-    color: db.color,
-    icon: db.icon,
+    color: db.color ?? undefined,
+    icon: db.icon ?? undefined,
     createdAt: dayjs(db.created_at),
     updatedAt: dayjs(db.updated_at),
   }
