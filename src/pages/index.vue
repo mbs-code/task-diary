@@ -48,7 +48,7 @@
       <Splitter
         ref="splitterRef"
         :gutter-size="8"
-        class="!bg-inherit !border-0 bg"
+        class="!bg-inherit !border-0"
         style="height: calc(100vh - 40px)"
         @resizeend="splitterHelper.resizeend"
       >
