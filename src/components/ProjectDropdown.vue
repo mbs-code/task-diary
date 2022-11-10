@@ -5,6 +5,7 @@
     option-label="name"
     :keep-in-viewport="false"
     placeholder="未選択"
+    show-clear
   >
     <template #value="slotProps">
       <template v-if="slotProps.value">

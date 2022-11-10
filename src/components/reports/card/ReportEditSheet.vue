@@ -10,7 +10,7 @@
       <ProjectDropdown
         v-model="form.project"
         class="flex-grow"
-        title-class="text-2xl"
+        title-class="text-xl"
       />
 
       <div class="w-2" />
@@ -33,7 +33,7 @@
       <Textarea
         ref="textareaRef"
         v-model="form.text"
-        class="w-full max-w-full min-w-full"
+        class="w-full max-w-full min-w-full min-h-6rem"
         auto-resize
       />
     </div>
