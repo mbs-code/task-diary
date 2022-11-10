@@ -46,7 +46,7 @@ import { Project } from '~~/src/databases/models/Project'
 import { FormReport, Report } from '~~/src/databases/models/Report'
 
 const props = defineProps<{
-  report: Report,
+  report?: Partial<Report>,
 }>()
 
 // eslint-disable-next-line func-call-spacing
@@ -91,9 +91,9 @@ const onSave = async () => {
   const params: FormReport = {
     text: form.text,
     projectId: form.project?.id,
-    statusId: props.report.status?.id,
-    isStar: props.report.isStar,
-    startAt: props.report.startAt,
+    statusId: props.report?.status?.id,
+    isStar: props.report?.isStar ?? false,
+    startAt: props.report?.startAt,
   }
 
   // upsert 処理

@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col gap-8">
+    <!-- タイムライン -->
     <div
       v-for="dayReport of timeline?.dayReports.value"
       :key="dayReport.key"
@@ -30,8 +31,22 @@
       </div>
     </div>
 
+    <!-- インライン編集カード -->
     <div class="ml-9rem">
-      <Button class="w-full p-button-outlined" icon="pi pi-pencil" label="新規作成" @click="onCreate" />
+      <ReportEditCard
+        v-if="showEditCard"
+        :report="defaultReport"
+        class="flex-grow"
+        @close="closeEditCard"
+      />
+
+      <Button
+        v-else
+        class="w-full p-button-outlined"
+        icon="pi pi-pencil"
+        label="新規作成"
+        @click="openEditCard"
+      />
     </div>
 
     <Menu ref="cardMenuRef" :model="menuItems" :popup="true" />
@@ -54,9 +69,19 @@ const timeline = computed(() => reportService?.timeline)
 /// ////////////////////////////////////////
 
 const dayjs = useDayjs()
-const onCreate = () => {
-  // 時間だけ確定させて、TASK要素に
-  emit('edit:report', { startAt: dayjs() })
+
+const showEditCard = ref<boolean>(false)
+const defaultReport = ref<Partial<Report>>()
+const openEditCard = () => {
+  defaultReport.value = {
+    text: '',
+    startAt: dayjs(),
+  }
+  showEditCard.value = true
+}
+
+const closeEditCard = () => {
+  showEditCard.value = false
 }
 
 /// ////////////////////////////////////////
