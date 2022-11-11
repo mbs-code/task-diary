@@ -35,6 +35,7 @@
     <div class="ml-9rem">
       <ReportEditCard
         v-if="showEditCard"
+        ref="editCardRef"
         :report="defaultReport"
         class="flex-grow"
         @close="closeEditCard"
@@ -72,12 +73,19 @@ const dayjs = useDayjs()
 
 const showEditCard = ref<boolean>(false)
 const defaultReport = ref<Partial<Report>>()
+const editCardRef = ref()
 const openEditCard = () => {
   defaultReport.value = {
     text: '',
     startAt: dayjs(),
   }
   showEditCard.value = true
+
+  // フォーカス
+  nextTick(() => {
+    const dom = editCardRef.value
+    dom.scrollIntoView({ behavior: 'smooth' })
+  })
 }
 
 const closeEditCard = () => {
