@@ -28,6 +28,8 @@
       />
     </div>
 
+    <InputDatetime v-model="form.startAt" />
+
     <!-- コンテンツ -->
     <div class="min-h-3rem">
       <Textarea
@@ -41,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+import { Dayjs } from 'dayjs'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Project } from '~~/src/databases/models/Project'
 import { FormReport, Report } from '~~/src/databases/models/Report'
@@ -77,23 +80,27 @@ onMounted(() => {
 const form = reactive<{
   text: string
   project?: Project
+  startAt?: Dayjs
 }>({
   text: '',
   project: undefined,
+  startAt: undefined,
 })
 
 const onInit = () => {
   form.text = props.report?.text ?? ''
   form.project = props.report?.project ?? undefined
+  form.startAt = props.report?.startAt
 }
 
 const onSave = async () => {
   const params: FormReport = {
     text: form.text,
     projectId: form.project?.id,
+    startAt: form.startAt,
+
     statusId: props.report?.status?.id,
     isStar: props.report?.isStar ?? false,
-    startAt: props.report?.startAt,
   }
 
   // upsert 処理

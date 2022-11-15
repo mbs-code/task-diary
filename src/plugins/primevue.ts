@@ -17,6 +17,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import ColorPicker from 'primevue/colorpicker'
+import OverlayPanel from 'primevue/overlaypanel'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(PrimeVue, { ripple: true })
@@ -38,4 +39,5 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('Column', Column)
   nuxtApp.vueApp.component('InputText', InputText)
   nuxtApp.vueApp.component('ColorPicker', ColorPicker)
+  nuxtApp.vueApp.component('OverlayPanel', OverlayPanel)
 })
