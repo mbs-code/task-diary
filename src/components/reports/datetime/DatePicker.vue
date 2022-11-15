@@ -149,7 +149,11 @@ const weekHeaders = computed(() => {
 ///
 
 const onClickDay = (item: DateItem) => {
-  emit('update:modelValue', item.date)
+  const date = (props.modelValue ?? dayjs())
+    .year(item.date.year())
+    .month(item.date.month())
+    .date(item.date.date())
+  emit('update:modelValue', date)
 }
 
 const onClickToday = () => {
