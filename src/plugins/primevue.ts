@@ -18,6 +18,7 @@ import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import ColorPicker from 'primevue/colorpicker'
 import OverlayPanel from 'primevue/overlaypanel'
+import Divider from 'primevue/divider'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(PrimeVue, { ripple: true })
@@ -40,4 +41,5 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('InputText', InputText)
   nuxtApp.vueApp.component('ColorPicker', ColorPicker)
   nuxtApp.vueApp.component('OverlayPanel', OverlayPanel)
+  nuxtApp.vueApp.component('Divider', Divider)
 })

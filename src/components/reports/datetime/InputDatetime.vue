@@ -14,10 +14,12 @@
       ref="overlayRef"
       append-to="body"
       :show-close-icon="true"
-      style="width: 450px"
-      :breakpoints="{'960px': '75vw'}"
     >
-      <DatePicker v-model="_value" />
+      <div class="flex">
+        <DatePicker v-model="_value" class="w-full" />
+        <Divider layout="vertical" />
+        <TimePicker v-model="_value" class="w-full" />
+      </div>
     </OverlayPanel>
   </div>
 </template>
