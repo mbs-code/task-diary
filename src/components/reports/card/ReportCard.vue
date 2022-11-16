@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="cardRef"
     :name="`report-${report.id}`"
     class="report-card-wrapper"
     :class="{ 'has-star': report.isStar }"
@@ -54,13 +55,26 @@ const openMenu = (event: MouseEvent) => {
 // モード切り替え
 
 const isEditMode = ref<boolean>(false)
+const cardRef = ref()
 
 const switchEditMode = () => {
   isEditMode.value = true
+
+  // フォーカス
+  nextTick(() => {
+    const dom = cardRef.value
+    dom.scrollIntoView({ behavior: 'smooth' })
+  })
 }
 
 const switchViewMode = () => {
   isEditMode.value = false
+
+  // フォーカス
+  nextTick(() => {
+    const dom = cardRef.value
+    dom.scrollIntoView({ behavior: 'smooth' })
+  })
 }
 </script>
 

@@ -32,10 +32,9 @@
     </div>
 
     <!-- インライン編集カード -->
-    <div class="ml-9rem">
+    <div ref="editCardRef" class="ml-9rem">
       <ReportEditCard
         v-if="showEditCard"
-        ref="editCardRef"
         :report="defaultReport"
         class="flex-grow"
         @close="closeEditCard"

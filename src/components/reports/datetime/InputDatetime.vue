@@ -1,7 +1,16 @@
 <template>
-  <div>
-    <span class="p-input-icon-right">
-      <InputText type="text" :value="showValue" readonly @click="openCalendarDialog" />
+  <div @click="openCalendarDialog">
+    <span class="w-full p-input-icon-left p-input-icon-right">
+      <i class="pi pi-calendar" />
+
+      <InputText
+        type="text"
+        class="w-full"
+        :value="showValue"
+        readonly
+        placeholder="時刻"
+      />
+
       <i
         v-if="showValue"
         class="pi pi-times cursor-pointer"
