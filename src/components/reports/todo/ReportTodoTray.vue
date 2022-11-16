@@ -7,7 +7,7 @@
       />
     </template>
 
-    <Menu ref="cardMenuRef" :model="menuItems" :popup="true" />
+    <Menu ref="cardMenuRef" class="report-card-menu" :model="menuItems" :popup="true" />
   </div>
 </template>
 
@@ -43,6 +43,11 @@ const menuItems = computed<MenuItem[]>(() => {
         label: 'タスクに移動',
         icon: 'pi pi-inbox',
         command: () => reportAction?.onSwitchTask(report),
+      },
+      {
+        label: 'コピーをタスクに作成',
+        icon: 'pi pi-inbox',
+        command: () => reportAction?.onSwitchTask(report, true),
       },
       {
         label: '編集',

@@ -21,8 +21,9 @@ export const useTodoService = () => {
       // あったら置き換える
       reports.value.splice(idx, 1, report)
     } else {
-      // 無ければ適当に追加
+      // 無ければ適当に追加してソート
       reports.value.push(report)
+      reports.value.sort((a, b) => a.updatedAt.isAfter(b.updatedAt) ? -1 : 1)
     }
   }
 

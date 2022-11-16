@@ -83,7 +83,7 @@ onMounted(() => {
       textarea.focus()
       textarea.setSelectionRange(len, len)
     }
-  }, 500)
+  }, 300)
 })
 
 const form = reactive<{

@@ -49,7 +49,7 @@
       />
     </div>
 
-    <Menu ref="cardMenuRef" :model="menuItems" :popup="true" />
+    <Menu ref="cardMenuRef" class="report-card-menu" :model="menuItems" :popup="true" />
   </div>
 </template>
 
@@ -110,6 +110,11 @@ const menuItems = computed<MenuItem[]>(() => {
         label: 'ToDoに移動',
         icon: 'pi pi-inbox',
         command: () => reportAction?.onSwitchTodo(report),
+      },
+      {
+        label: 'コピーをToDoに作成',
+        icon: 'pi pi-copy',
+        command: () => reportAction?.onSwitchTodo(report, true),
       },
       {
         label: '編集',
