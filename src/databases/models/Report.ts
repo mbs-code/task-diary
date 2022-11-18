@@ -65,7 +65,7 @@ export const parseReport = (form: FormReport): Omit<DBReport, MetaColumns> => {
 
   // 簡易バリデ
   const text = form.text?.trim()
-  if (!text) { throw new Error('text is empty') }
+  if (!text) { throw new Error('本文が空欄です。') }
 
   return {
     text: form.text,
@@ -79,4 +79,9 @@ export const parseReport = (form: FormReport): Omit<DBReport, MetaColumns> => {
       ? dayjs(form.endAt).toISOString()
       : null,
   }
+}
+
+export const toLog = (report: Report) => {
+  const text = report.text.slice(0, 10).replace(/\r?\n/g, ' ')
+  return `[${report.id}]「${text}...」`
 }

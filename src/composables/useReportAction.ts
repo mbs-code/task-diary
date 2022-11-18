@@ -1,51 +1,79 @@
 import { InjectionKey } from 'nuxt/dist/app/compat/capi'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
-import { Report } from '~~/src/databases/models/Report'
+import { Report, toLog } from '~~/src/databases/models/Report'
 
 export const useReportAction = (service: ReturnType<typeof useReportService>) => {
+  const notify = useNotify()
   const confirm = useConfirm()
   const dayjs = useDayjs()
 
   /** TODO 要素にする */
   const onSwitchTodo = async (report: Report, copy = false) => {
-    const form = {
-      ...report,
-      startAt: undefined,
-    }
+    try {
+      const form = {
+        ...report,
+        startAt: undefined,
+      }
 
-    if (copy) {
-      const crtReport = await ReportAPI.create(form)
-      service.updateList(crtReport)
-    } else {
-      const updReport = await ReportAPI.update(report.id, form)
-      service.updateList(updReport, report)
+      // update 処理
+      if (copy) {
+        const crtReport = await ReportAPI.create(form)
+        service.updateList(crtReport)
+      } else {
+        const updReport = await ReportAPI.update(report.id, form)
+        service.updateList(updReport, report)
+      }
+
+      // 更新通知
+      const method = copy ? '作成' : '更新'
+      notify.success(`${toLog(report)}を${method}しました。`)
+    } catch (err) {
+      notify.thrown(err)
     }
   }
 
   /** タスク要素にする */
   const onSwitchTask = async (report: Report, copy = false) => {
-    const form = {
-      ...report,
-      startAt: dayjs(),
-    }
+    try {
+      const form = {
+        ...report,
+        startAt: dayjs(),
+      }
 
-    if (copy) {
-      const crtReport = await ReportAPI.create(form)
-      service.updateList(crtReport)
-    } else {
-      const updReport = await ReportAPI.update(report.id, form)
-      service.updateList(updReport, report)
+      // update 処理
+      if (copy) {
+        const crtReport = await ReportAPI.create(form)
+        service.updateList(crtReport)
+      } else {
+        const updReport = await ReportAPI.update(report.id, form)
+        service.updateList(updReport, report)
+      }
+
+      // 更新通知
+      const method = copy ? '作成' : '更新'
+      notify.success(`${toLog(report)}を${method}しました。`)
+    } catch (err) {
+      notify.thrown(err)
     }
   }
 
   /** 星をトグルする */
   const onToggleStar = async (report: Report) => {
-    const form = {
-      ...report,
-      isStar: !report.isStar,
+    try {
+      const form = {
+        ...report,
+        isStar: !report.isStar,
+      }
+
+      // update 処理
+      const updReport = await ReportAPI.update(report.id, form)
+      service.updateList(updReport, report)
+
+      // 更新通知
+      notify.success(`${toLog(report)}を更新しました。`)
+    } catch (err) {
+      notify.thrown(err)
     }
-    const updReport = await ReportAPI.update(report.id, form)
-    service.updateList(updReport, report)
   }
 
   /** レポートの削除 */
@@ -61,10 +89,17 @@ export const useReportAction = (service: ReturnType<typeof useReportService>) =>
         icon: 'pi pi-info-circle',
         acceptClass: 'p-button-danger',
         accept: async () => {
-          await ReportAPI.remove(report.id)
-          service.removeList(report)
+          try {
+            // delete 処理
+            await ReportAPI.remove(report.id)
+            service.removeList(report)
 
-          resolve()
+            // 更新通知
+            notify.success(`${toLog(report)}を削除しました。`)
+            resolve()
+          } catch (err) {
+            notify.thrown(err)
+          }
         },
         reject: () => resolve(),
         onHide: () => resolve(),

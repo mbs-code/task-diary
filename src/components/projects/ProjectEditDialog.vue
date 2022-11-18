@@ -35,7 +35,7 @@
             :style="{ backgroundColor: data?.color }"
           />
 
-          <span>{{ data?.color ?? '---' }}</span>
+          <span>{{ data?.color || '---' }}</span>
         </template>
 
         <template #editor="{ data, field }">
@@ -70,7 +70,7 @@
 <script setup lang="ts">
 import { inject } from 'vue'
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
-import { FormProject, Project } from '~~/src/databases/models/Project'
+import { FormProject, Project, toLog } from '~~/src/databases/models/Project'
 
 const props = defineProps<{
   visible: boolean,
@@ -79,7 +79,7 @@ const props = defineProps<{
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
   (e: 'update:visible', visible: boolean): void,
-  (e: 'update:project', project: Project, old?: Partial<Project>): void,
+  (e: 'update:project'): void,
 }>()
 
 const visible = computed({
@@ -88,6 +88,9 @@ const visible = computed({
 })
 
 const projectService = inject(ProjectServiceKey)
+
+const notify = useNotify()
+const confirm = useConfirm()
 
 /// ////////////////////////////////////////
 
@@ -136,27 +139,32 @@ const onRowEditCancel = (project: Project) => {
 }
 
 const onRowEditSave = async (project: Project) => {
-  const params: FormProject = {
-    name: project.name,
-    color: project.color,
-    icon: project.icon,
+  try {
+    const params: FormProject = {
+      name: project.name,
+      color: project.color,
+      icon: project.icon,
+    }
+
+    // upsert 処理
+    const projectId = project?.id
+    const updProject = projectId
+      ? await ProjectAPI.update(projectId, params)
+      : await ProjectAPI.create(params)
+
+    // データの置き換え
+    await projectService?.fetch()
+    onInit()
+
+    // 更新通知
+    const method = projectId ? '更新' : '作成'
+    notify.success(`${toLog(updProject)}を${method}しました。`)
+    emit('update:project')
+  } catch (err) {
+    notify.thrown(err)
   }
-
-  // upsert 処理
-  const projectId = project?.id
-  const updProject = projectId
-    ? await ProjectAPI.update(projectId, params)
-    : await ProjectAPI.create(params)
-
-  // 画面更新
-  await projectService?.fetch()
-  onInit()
-
-  const base = editingRows.value.find(row => row.id === project.id)
-  emit('update:project', updProject, base)
 }
 
-const confirm = useConfirm()
 const onRowDelete = (project: Project) => {
   confirm.require({
     // eslint-disable-next-line no-irregular-whitespace
@@ -165,11 +173,20 @@ const onRowDelete = (project: Project) => {
     icon: 'pi pi-info-circle',
     acceptClass: 'p-button-danger',
     accept: async () => {
-      await ProjectAPI.remove(project.id)
+      try {
+        // delete 処理
+        await ProjectAPI.remove(project.id)
 
-      // 画面更新
-      await projectService?.fetch()
-      onInit()
+        // データの置き換え
+        await projectService?.fetch()
+        onInit()
+
+        // 更新通知
+        notify.success(`${toLog(project)}を削除しました。`)
+        emit('update:project')
+      } catch (err) {
+        notify.thrown(err)
+      }
     },
   })
 }

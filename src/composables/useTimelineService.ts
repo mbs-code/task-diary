@@ -6,6 +6,7 @@ import { Report } from '~~/src/databases/models/Report'
 export type DayReport = { key: string, date: Dayjs, reports: Report[] }
 
 export const useTimelineService = (timelineRef: Ref) => {
+  const notify = useNotify()
   const dayjs = useDayjs()
 
   const dayReports = ref<DayReport[]>([])
@@ -14,6 +15,7 @@ export const useTimelineService = (timelineRef: Ref) => {
 
   const onLoadPrev = async () => {
     // 前の要素を取ってくる
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     const _cnt = await fetchList()
     // TODO: 完了したらトースト
     // if (cnt > 0) {
@@ -24,47 +26,52 @@ export const useTimelineService = (timelineRef: Ref) => {
   }
 
   const fetchList = async () => {
+    try {
     // 現在の最上部の要素を取得
-    const topDayReport = dayReports.value.at(0)?.reports.at(0)
+      const topDayReport = dayReports.value.at(0)?.reports.at(0)
 
-    // 最新のデータを取得
-    const chunkReports = await ReportAPI.getAll({
-      onlyTask: true,
-      limit: 5,
-      until: oldestStartAt.value,
-      notin: oldestIds.value.length ? oldestIds.value : undefined,
-      sorts: [['start_at', 'desc']],
-    })
+      // 最新のデータを取得
+      const chunkReports = await ReportAPI.getAll({
+        onlyTask: true,
+        limit: 5,
+        until: oldestStartAt.value,
+        notin: oldestIds.value.length ? oldestIds.value : undefined,
+        sorts: [['start_at', 'desc']],
+      })
 
-    // 差分取得用コード
-    for (const report of chunkReports) {
+      // 差分取得用コード
+      for (const report of chunkReports) {
       // 保持情報より古いなら追加
-      if (!oldestStartAt.value) {
+        if (!oldestStartAt.value) {
         // 保持日時が無ければ追加
-        oldestStartAt.value = report.startAt
-        oldestIds.value = [report.id]
-      } else if (report.startAt && oldestStartAt.value.isAfter(report.startAt)) {
+          oldestStartAt.value = report.startAt
+          oldestIds.value = [report.id]
+        } else if (report.startAt && oldestStartAt.value.isAfter(report.startAt)) {
         // レポートの日時が古ければ更新
-        oldestStartAt.value = report.startAt
-        oldestIds.value = [report.id]
-      } else if (report.startAt && oldestStartAt.value.isSame(report.startAt)) {
+          oldestStartAt.value = report.startAt
+          oldestIds.value = [report.id]
+        } else if (report.startAt && oldestStartAt.value.isSame(report.startAt)) {
         // レポートの日時が同じならば追記
-        oldestIds.value.push(report.id)
+          oldestIds.value.push(report.id)
+        }
+
+        // dayReport に追加していく
+        replaceList(report)
       }
 
-      // dayReport に追加していく
-      replaceList(report)
+      // 最後に取得した要素にスクロール
+      nextTick(() => {
+        if (topDayReport) {
+          const dom = timelineRef.value?.$el.querySelector(`[name=report-${topDayReport.id}]`)
+          dom.scrollIntoView()
+        }
+      })
+
+      return chunkReports.length
+    } catch (err) {
+      notify.thrown(err)
+      return 0
     }
-
-    // 最後に取得した要素にスクロール
-    nextTick(() => {
-      if (topDayReport) {
-        const dom = timelineRef.value?.$el.querySelector(`[name=report-${topDayReport.id}]`)
-        dom.scrollIntoView()
-      }
-    })
-
-    return chunkReports.length
   }
 
   const replaceList = (report: Report) => {

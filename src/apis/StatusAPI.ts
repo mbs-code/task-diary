@@ -63,7 +63,8 @@ export class StatusAPI {
       .selectFrom('statuses')
       .selectAll()
       .where('id', '=', statusId)
-      .executeTakeFirstOrThrow()
+      .executeTakeFirst()
+    if (!dbTag) { throw new Error(`取得に失敗しました。(s${statusId})`) }
 
     return formatStatus(dbTag)
   }
@@ -81,7 +82,7 @@ export class StatusAPI {
       .select([db.fn.count('id').as('count')])
       .where('name', '=', parse.name)
       .executeTakeFirst() as { count: bigint }
-    if (count > 0) { throw new Error('duplicate name') }
+    if (count > 0) { throw new Error('この名称は既に使われています。') }
 
     // 作成
     const { insertId } = await db
@@ -110,7 +111,7 @@ export class StatusAPI {
       .where('name', '=', parse.name)
       .where('id', '<>', statusId)
       .executeTakeFirst() as { count: bigint }
-    if (count > 0) { throw new Error('duplicate name') }
+    if (count > 0) { throw new Error('この名称は既に使われています。') }
 
     // 更新
     const { numUpdatedRows } = await db
@@ -123,7 +124,7 @@ export class StatusAPI {
       .executeTakeFirst()
 
     if (Number(numUpdatedRows) === 0) {
-      throw new Error('no result')
+      throw new Error(`更新に失敗しました。(s${statusId})`)
     }
 
     return await this.get(Number(statusId))
@@ -139,7 +140,7 @@ export class StatusAPI {
       .select([db.fn.count('id').as('count')])
       .where('status_id', '=', status.id)
       .executeTakeFirst() as { count: bigint }
-    if (count > 0) { throw new Error('this has relation') }
+    if (count > 0) { throw new Error('使用されているため、削除できません。') }
 
     // 削除
     const { numDeletedRows } = await db
@@ -148,7 +149,7 @@ export class StatusAPI {
       .executeTakeFirst()
 
     if (Number(numDeletedRows) === 0) {
-      throw new Error('no result')
+      throw new Error(`削除に失敗しました。(s${statusId})`)
     }
 
     return true

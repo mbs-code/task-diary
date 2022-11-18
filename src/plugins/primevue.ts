@@ -1,6 +1,6 @@
 import PrimeVue from 'primevue/config'
 import ConfirmationService from 'primevue/confirmationservice'
-
+import ToastService from 'primevue/toastservice'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import Textarea from 'primevue/textarea'
@@ -19,10 +19,12 @@ import InputText from 'primevue/inputtext'
 import ColorPicker from 'primevue/colorpicker'
 import OverlayPanel from 'primevue/overlaypanel'
 import Divider from 'primevue/divider'
+import Toast from 'primevue/toast'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(PrimeVue, { ripple: true })
   nuxtApp.vueApp.use(ConfirmationService)
+  nuxtApp.vueApp.use(ToastService)
 
   nuxtApp.vueApp.component('Button', Button)
   nuxtApp.vueApp.component('Dialog', Dialog)
@@ -42,4 +44,5 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('ColorPicker', ColorPicker)
   nuxtApp.vueApp.component('OverlayPanel', OverlayPanel)
   nuxtApp.vueApp.component('Divider', Divider)
+  nuxtApp.vueApp.component('Toast', Toast)
 })

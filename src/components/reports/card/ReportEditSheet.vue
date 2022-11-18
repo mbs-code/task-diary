@@ -55,7 +55,7 @@
 import { Dayjs } from 'dayjs'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Project } from '~~/src/databases/models/Project'
-import { FormReport, Report } from '~~/src/databases/models/Report'
+import { FormReport, Report, toLog } from '~~/src/databases/models/Report'
 
 const props = defineProps<{
   report?: Partial<Report>,
@@ -68,6 +68,8 @@ const emit = defineEmits<{
 }>()
 
 const reportService = inject(ReportServiceKey)
+
+const notify = useNotify()
 
 /// ////////////////////////////////////////
 
@@ -106,24 +108,31 @@ const onInit = () => {
 }
 
 const onSave = async () => {
-  const params: FormReport = {
-    text: form.text,
-    projectId: form.project?.id,
-    startAt: form.startAt,
-    isStar: form.isStar,
+  try {
+    const params: FormReport = {
+      text: form.text,
+      projectId: form.project?.id,
+      startAt: form.startAt,
+      isStar: form.isStar,
 
-    statusId: props.report?.status?.id,
+      statusId: props.report?.status?.id,
+    }
+
+    // upsert 処理
+    const reportId = props.report?.id
+    const updReport = reportId
+      ? await ReportAPI.update(reportId, params)
+      : await ReportAPI.create(params)
+
+    // データの置き換え
+    reportService?.updateList(updReport)
+
+    // 更新通知
+    const method = reportId ? '更新' : '作成'
+    notify.success(`${toLog(updReport)}を${method}しました。`)
+    emit('close')
+  } catch (err) {
+    notify.thrown(err)
   }
-
-  // upsert 処理
-  const reportId = props.report?.id
-  const updReport = reportId
-    ? await ReportAPI.update(reportId, params)
-    : await ReportAPI.create(params)
-
-  // データの置き換え
-  reportService?.updateList(updReport)
-
-  emit('close')
 }
 </script>

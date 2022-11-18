@@ -3,12 +3,18 @@ import { ProjectAPI } from '~~/src/apis/ProjectAPI'
 import { Project } from '~~/src/databases/models/Project'
 
 export const useProjectService = () => {
+  const notify = useNotify()
+
   const projects = ref<Project[]>([])
 
   const fetch = async () => {
-    projects.value = await ProjectAPI.getAll({
-      sorts: [['id', 'asc']],
-    })
+    try {
+      projects.value = await ProjectAPI.getAll({
+        sorts: [['id', 'asc']],
+      })
+    } catch (err) {
+      notify.thrown(err)
+    }
   }
 
   onMounted(async () => {

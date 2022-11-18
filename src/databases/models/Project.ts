@@ -42,13 +42,17 @@ export const formatProject = (db: DBProject): Project => {
 export const parseProject = (form: FormProject): Omit<DBProject, MetaColumns> => {
   // 簡易バリデ
   const name = form.name?.trim()
-  if (!name) { throw new Error('name is empty') }
+  if (!name) { throw new Error('名称が空欄です。') }
   const icon = form.icon?.trim()
-  if (icon && icon.length > 3) { throw new Error('length > 3 in icon') } // 二文字まで
+  if (icon && icon.length >= 3) { throw new Error('アイコン名は2文字まで入力可能です。') }
 
   return {
     name: form.name,
     color: form.color ?? null,
     icon: form.icon ?? null,
   }
+}
+
+export const toLog = (project: Project) => {
+  return `[${project.id}]「${project.name}」`
 }

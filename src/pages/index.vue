@@ -26,12 +26,6 @@
 
         <Button
           class="p-button-plain p-button-text !w-8 !h-8"
-          icon="pi pi-file-edit"
-          @click="openReportEditDialog(undefined)"
-        />
-
-        <Button
-          class="p-button-plain p-button-text !w-8 !h-8"
           icon="pi pi-box"
           @click="openProjectEditDialog"
         />
@@ -48,29 +42,16 @@
           ref="timelineRef"
           class="min-w-200px overflow-y-scroll"
         >
-          <ReportTimeline
-            class="p-4"
-            @edit:report="openReportEditDialog"
-          />
+          <ReportTimeline class="p-4" />
         </SplitterPanel>
 
         <SplitterPanel
           ref="todoRef"
           class="overflow-y-scroll"
         >
-          <ReportTodoTray
-            class="p-4"
-            @edit:report="openReportEditDialog"
-          />
+          <ReportTodoTray class="p-4" />
         </SplitterPanel>
       </Splitter>
-
-      <ReportEditDialog
-        v-model:visible="showReportEditDialog"
-        :base-report="selectedReport"
-        :projects="projects"
-        @update:report="reportService.updateList"
-      />
 
       <ProjectEditDialog
         v-model:visible="showProjectEditDialog"
@@ -81,16 +62,9 @@
 </template>
 
 <script setup lang="ts">
-import { ProjectAPI } from '~~/src/apis/ProjectAPI'
-import { Project } from '~~/src/databases/models/Project'
-import { Report } from '~~/src/databases/models/Report'
-
 definePageMeta({ layout: false })
 
-const projects = ref<Project[]>([])
-onMounted(async () => {
-  projects.value = await ProjectAPI.getAll()
-})
+const notify = useNotify()
 
 const splitterRef = ref()
 const timelineRef = ref()
@@ -111,14 +85,19 @@ const projectService = useProjectService()
 provide(ProjectServiceKey, projectService)
 
 const onInit = async () => {
-  reportService.timeline.clear()
-  reportService.todo.clear()
+  try {
+    reportService.timeline.clear()
+    reportService.todo.clear()
 
-  await reportService.timeline.fetchList()
-  await reportService.todo.fetchList()
+    await reportService.timeline.fetchList()
+    await reportService.todo.fetchList()
 
-  const tl = timelineRef.value.$el
-  tl?.scrollTo(0, tl.scrollHeight)
+    // TLを最下部にスクロールする
+    const tl = timelineRef.value.$el
+    tl?.scrollTo(0, tl.scrollHeight)
+  } catch (err) {
+    notify.thrown(err)
+  }
 }
 
 onMounted(() => {
@@ -136,13 +115,6 @@ onMounted(() => {
 /// ////////////////////////////////////////
 // ダイアログ系
 
-const selectedReport = ref<Partial<Report>>()
-const showReportEditDialog = ref<boolean>(false)
-const openReportEditDialog = (report?: Partial<Report>) => {
-  selectedReport.value = report
-  showReportEditDialog.value = true
-}
-
 const showProjectEditDialog = ref<boolean>(false)
 const openProjectEditDialog = () => {
   showProjectEditDialog.value = true
@@ -155,19 +127,19 @@ const onReload = () => {
   window.location.reload()
 }
 
-const onSeed = async () => {
-  console.log('seed')
-  const database = useDatabase()
-  await database.testSeed()
+const onSeed = () => {
+  // console.log('seed')
+  // const database = useDatabase()
+  // await database.testSeed()
 
-  location.reload()
+  // location.reload()
 }
 
-const onFresh = async () => {
-  console.log('fresh')
-  const database = useDatabase()
-  await database.dbWipe()
+const onFresh = () => {
+  // console.log('fresh')
+  // const database = useDatabase()
+  // await database.dbWipe()
 
-  location.reload()
+  // location.reload()
 }
 </script>
