@@ -85,14 +85,19 @@ const projectService = useProjectService()
 provide(ProjectServiceKey, projectService)
 
 const onInit = async () => {
-  reportService.timeline.clear()
-  reportService.todo.clear()
+  try {
+    reportService.timeline.clear()
+    reportService.todo.clear()
 
-  await reportService.timeline.fetchList()
-  await reportService.todo.fetchList()
+    await reportService.timeline.fetchList()
+    await reportService.todo.fetchList()
 
-  const tl = timelineRef.value.$el
-  tl?.scrollTo(0, tl.scrollHeight)
+    // TLを最下部にスクロールする
+    const tl = timelineRef.value.$el
+    tl?.scrollTo(0, tl.scrollHeight)
+  } catch (err) {
+    notify.thrown(err)
+  }
 }
 
 onMounted(() => {
@@ -122,19 +127,19 @@ const onReload = () => {
   window.location.reload()
 }
 
-const onSeed = async () => {
+const onSeed = () => {
   console.log('seed')
-  const database = useDatabase()
-  await database.testSeed()
+  // const database = useDatabase()
+  // await database.testSeed()
 
-  location.reload()
+  // location.reload()
 }
 
-const onFresh = async () => {
+const onFresh = () => {
   console.log('fresh')
-  const database = useDatabase()
-  await database.dbWipe()
+  // const database = useDatabase()
+  // await database.dbWipe()
 
-  location.reload()
+  // location.reload()
 }
 </script>
