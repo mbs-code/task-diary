@@ -1,10 +1,11 @@
 import { Dayjs } from 'dayjs'
+import { Ref } from 'nuxt/dist/app/compat/capi'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Report } from '~~/src/databases/models/Report'
 
 export type DayReport = { key: string, date: Dayjs, reports: Report[] }
 
-export const useTimelineService = () => {
+export const useTimelineService = (timelineRef: Ref) => {
   const dayjs = useDayjs()
 
   const dayReports = ref<DayReport[]>([])
@@ -23,7 +24,9 @@ export const useTimelineService = () => {
   }
 
   const fetchList = async () => {
-    // TODO: 自動スクロール対応
+    // 現在の最上部の要素を取得
+    const topDayReport = dayReports.value.at(0)?.reports.at(0)
+
     // 最新のデータを取得
     const chunkReports = await ReportAPI.getAll({
       onlyTask: true,
@@ -52,6 +55,14 @@ export const useTimelineService = () => {
       // dayReport に追加していく
       replaceList(report)
     }
+
+    // 最後に取得した要素にスクロール
+    nextTick(() => {
+      if (topDayReport) {
+        const dom = timelineRef.value?.$el.querySelector(`[name=report-${topDayReport.id}]`)
+        dom.scrollIntoView()
+      }
+    })
 
     return chunkReports.length
   }

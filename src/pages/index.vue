@@ -20,6 +20,12 @@
 
         <Button
           class="p-button-plain p-button-text !w-8 !h-8"
+          icon="pi pi-sync"
+          @click="onReload"
+        />
+
+        <Button
+          class="p-button-plain p-button-text !w-8 !h-8"
           icon="pi pi-file-edit"
           @click="openReportEditDialog(undefined)"
         />
@@ -28,20 +34,6 @@
           class="p-button-plain p-button-text !w-8 !h-8"
           icon="pi pi-box"
           @click="openProjectEditDialog"
-        />
-
-        <Button
-          v-if="!showTodoPanel"
-          class="p-button-plain p-button-text !w-8 !h-8"
-          icon="pi pi-caret-left"
-          @click="showTodoPanel = true"
-        />
-
-        <Button
-          v-if="showTodoPanel"
-          class="p-button-plain p-button-text !w-8 !h-8"
-          icon="pi pi-caret-right"
-          @click="showTodoPanel = false"
         />
       </template>
 
@@ -63,7 +55,6 @@
         </SplitterPanel>
 
         <SplitterPanel
-          v-if="showTodoPanel"
           ref="todoRef"
           class="overflow-y-scroll"
         >
@@ -100,8 +91,6 @@ const projects = ref<Project[]>([])
 onMounted(async () => {
   projects.value = await ProjectAPI.getAll()
 })
-
-const showTodoPanel = ref<boolean>(true)
 
 const splitterRef = ref()
 const timelineRef = ref()
@@ -161,6 +150,10 @@ const openProjectEditDialog = () => {
 
 /// ////////////////////////////////////////
 // デバッグ用
+
+const onReload = () => {
+  window.location.reload()
+}
 
 const onSeed = async () => {
   console.log('seed')

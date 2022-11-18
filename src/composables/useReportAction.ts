@@ -7,23 +7,35 @@ export const useReportAction = (service: ReturnType<typeof useReportService>) =>
   const dayjs = useDayjs()
 
   /** TODO 要素にする */
-  const onSwitchTodo = async (report: Report) => {
+  const onSwitchTodo = async (report: Report, copy = false) => {
     const form = {
       ...report,
-      startAt: null,
+      startAt: undefined,
     }
-    const updReport = await ReportAPI.update(report.id, form)
-    service.updateList(updReport, report)
+
+    if (copy) {
+      const crtReport = await ReportAPI.create(form)
+      service.updateList(crtReport)
+    } else {
+      const updReport = await ReportAPI.update(report.id, form)
+      service.updateList(updReport, report)
+    }
   }
 
   /** タスク要素にする */
-  const onSwitchTask = async (report: Report) => {
+  const onSwitchTask = async (report: Report, copy = false) => {
     const form = {
       ...report,
       startAt: dayjs(),
     }
-    const updReport = await ReportAPI.update(report.id, form)
-    service.updateList(updReport, report)
+
+    if (copy) {
+      const crtReport = await ReportAPI.create(form)
+      service.updateList(crtReport)
+    } else {
+      const updReport = await ReportAPI.update(report.id, form)
+      service.updateList(updReport, report)
+    }
   }
 
   /** 星をトグルする */

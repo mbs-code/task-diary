@@ -4,7 +4,8 @@
     :options="projectService?.projects.value"
     option-label="name"
     :keep-in-viewport="false"
-    placeholder="未選択"
+    placeholder="プロジェクト名"
+    show-clear
   >
     <template #value="slotProps">
       <template v-if="slotProps.value">

@@ -3,10 +3,10 @@ import { Report } from '~~/src/databases/models/Report'
 
 export const useReportService = (
   mainRef: Ref,
-  _timelineRef: Ref,
+  timelineRef: Ref,
   _todoRef: Ref,
 ) => {
-  const timelineService = useTimelineService()
+  const timelineService = useTimelineService(timelineRef)
   const todoService = useTodoService()
 
   /** レポートをリストに追加・更新する */

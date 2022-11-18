@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col gap-8">
+    <!-- タイムライン -->
     <div
       v-for="dayReport of timeline?.dayReports.value"
       :key="dayReport.key"
@@ -30,11 +31,25 @@
       </div>
     </div>
 
-    <div class="ml-9rem">
-      <Button class="w-full p-button-outlined" icon="pi pi-pencil" label="新規作成" @click="onCreate" />
+    <!-- インライン編集カード -->
+    <div ref="editCardRef" class="ml-9rem">
+      <ReportEditCard
+        v-if="showEditCard"
+        :report="defaultReport"
+        class="flex-grow"
+        @close="closeEditCard"
+      />
+
+      <Button
+        v-else
+        class="w-full p-button-outlined"
+        icon="pi pi-pencil"
+        label="新規作成"
+        @click="openEditCard"
+      />
     </div>
 
-    <Menu ref="cardMenuRef" :model="menuItems" :popup="true" />
+    <Menu ref="cardMenuRef" class="report-card-menu" :model="menuItems" :popup="true" />
   </div>
 </template>
 
@@ -54,9 +69,26 @@ const timeline = computed(() => reportService?.timeline)
 /// ////////////////////////////////////////
 
 const dayjs = useDayjs()
-const onCreate = () => {
-  // 時間だけ確定させて、TASK要素に
-  emit('edit:report', { startAt: dayjs() })
+
+const showEditCard = ref<boolean>(false)
+const defaultReport = ref<Partial<Report>>()
+const editCardRef = ref()
+const openEditCard = () => {
+  defaultReport.value = {
+    text: '',
+    startAt: dayjs(),
+  }
+  showEditCard.value = true
+
+  // フォーカス
+  nextTick(() => {
+    const dom = editCardRef.value
+    dom.scrollIntoView({ behavior: 'smooth' })
+  })
+}
+
+const closeEditCard = () => {
+  showEditCard.value = false
 }
 
 /// ////////////////////////////////////////
@@ -78,6 +110,11 @@ const menuItems = computed<MenuItem[]>(() => {
         label: 'ToDoに移動',
         icon: 'pi pi-inbox',
         command: () => reportAction?.onSwitchTodo(report),
+      },
+      {
+        label: 'コピーをToDoに作成',
+        icon: 'pi pi-copy',
+        command: () => reportAction?.onSwitchTodo(report, true),
       },
       {
         label: '編集',

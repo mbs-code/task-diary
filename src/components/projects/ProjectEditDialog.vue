@@ -41,7 +41,7 @@
         <template #editor="{ data, field }">
           <InputText v-model="data[field]" class="mr-4 w-full" placeholder="文字列" />
 
-          <ColorPicker v-model="data['color']" class="mx-2" />
+          <ColorPicker v-model="data['color']" class="mx-2" @change="data['color'] = '#' + data['color']" />
           <InputText v-model="data['color']" class="w-6rem" placeholder="色" />
         </template>
       </Column>
@@ -54,6 +54,7 @@
         <template #body="{ data }">
           <template v-if="!isRowEdit(data)">
             <Button icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-plain" @click="onRowEdit(data)" />
+            <Button icon="pi pi-trash" class="p-button-rounded p-button-text p-button-plain" @click="onRowDelete(data)" />
           </template>
 
           <template v-else>
@@ -93,13 +94,13 @@ const projectService = inject(ProjectServiceKey)
 const projects = ref<Partial<Project>[]>([])
 const editingRows = ref<Partial<Project>[]>([])
 
-const init = () => {
+const onInit = () => {
   editingRows.value = []
   projects.value = [...(projectService?.projects.value ?? [])]
 }
 
 watch(() => props.visible, (val) => {
-  val && init()
+  val && onInit()
 })
 
 /// ////////////////////////////////////////
@@ -148,10 +149,28 @@ const onRowEditSave = async (project: Project) => {
     : await ProjectAPI.create(params)
 
   // 画面更新
-  projectService?.fetch()
-  init()
+  await projectService?.fetch()
+  onInit()
 
   const base = editingRows.value.find(row => row.id === project.id)
   emit('update:project', updProject, base)
+}
+
+const confirm = useConfirm()
+const onRowDelete = (project: Project) => {
+  confirm.require({
+    // eslint-disable-next-line no-irregular-whitespace
+    message: `「${project.name}...」\n  のプロジェクトを削除しますか？`,
+    header: '削除の確認',
+    icon: 'pi pi-info-circle',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      await ProjectAPI.remove(project.id)
+
+      // 画面更新
+      await projectService?.fetch()
+      onInit()
+    },
+  })
 }
 </script>

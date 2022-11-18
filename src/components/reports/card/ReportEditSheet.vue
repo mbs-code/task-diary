@@ -1,39 +1,50 @@
 <template>
   <div
-    class="flex flex-col gap-3"
+    class="flex flex-col gap-4"
     @keydown.ctrl.s.stop="onSave"
     @keydown.ctrl.enter.stop="onSave"
     @keydown.alt.enter.stop="onSave"
   >
-    <!-- ヘッダ -->
-    <div class="flex items-center gap-2 text-2xl">
-      <ProjectDropdown
-        v-model="form.project"
-        class="flex-grow"
-        title-class="text-2xl"
-      />
+    <!-- 上部フォーム -->
+    <div class="flex items-center gap-4">
+      <!-- 左 -->
+      <div class="flex-grow flex flex-col gap-2">
+        <ProjectDropdown v-model="form.project" />
+        <InputDatetime v-model="form.startAt" />
+      </div>
 
-      <div class="w-2" />
+      <!-- 右 -->
+      <div class="min-w-4rem flex flex-col gap-2">
+        <div class="flex gap-1">
+          <Button
+            :icon="form.isStar ? 'pi pi-star-fill' : 'pi pi-star'"
+            class="p-button-rounded p-button-warning"
+            :class="{ 'p-button-text': !form.isStar }"
+            @click="form.isStar = !form.isStar"
+          />
+          <Button
+            icon="pi pi-times"
+            class="p-button-plain p-button-rounded p-button-text"
+            @click="emit('close')"
+          />
+        </div>
 
-      <Button
-        icon="pi pi-save"
-        class="p-button-rounded"
-        @click="onSave"
-      />
-
-      <Button
-        icon="pi pi-times"
-        class="p-button-plain p-button-rounded p-button-text"
-        @click="emit('close')"
-      />
+        <div class="flex justify-end">
+          <Button
+            icon="pi pi-save"
+            class="!w-full"
+            @click="onSave"
+          />
+        </div>
+      </div>
     </div>
 
-    <!-- コンテンツ -->
+    <!-- 下部フォーム -->
     <div class="min-h-3rem">
       <Textarea
         ref="textareaRef"
         v-model="form.text"
-        class="w-full max-w-full min-w-full"
+        class="w-full max-w-full min-w-full min-h-6rem"
         auto-resize
       />
     </div>
@@ -41,12 +52,13 @@
 </template>
 
 <script setup lang="ts">
+import { Dayjs } from 'dayjs'
 import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Project } from '~~/src/databases/models/Project'
 import { FormReport, Report } from '~~/src/databases/models/Report'
 
 const props = defineProps<{
-  report: Report,
+  report?: Partial<Report>,
 }>()
 
 // eslint-disable-next-line func-call-spacing
@@ -63,37 +75,44 @@ const textareaRef = ref()
 onMounted(() => {
   onInit()
 
-  // フォーカス
-  nextTick(() => {
+  // フォーカス（スクロール遅延込）
+  setTimeout(() => {
     const textarea = textareaRef.value.$el
     if (textarea) {
       const len = textarea.value.length
       textarea.focus()
       textarea.setSelectionRange(len, len)
     }
-  })
+  }, 300)
 })
 
 const form = reactive<{
   text: string
   project?: Project
+  startAt?: Dayjs
+  isStar: boolean
 }>({
   text: '',
   project: undefined,
+  startAt: undefined,
+  isStar: false,
 })
 
 const onInit = () => {
   form.text = props.report?.text ?? ''
   form.project = props.report?.project ?? undefined
+  form.startAt = props.report?.startAt
+  form.isStar = props.report?.isStar ?? false
 }
 
 const onSave = async () => {
   const params: FormReport = {
     text: form.text,
     projectId: form.project?.id,
-    statusId: props.report.status?.id,
-    isStar: props.report.isStar,
-    startAt: props.report.startAt,
+    startAt: form.startAt,
+    isStar: form.isStar,
+
+    statusId: props.report?.status?.id,
   }
 
   // upsert 処理
