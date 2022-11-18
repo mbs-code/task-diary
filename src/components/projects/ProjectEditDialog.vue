@@ -41,7 +41,7 @@
         <template #editor="{ data, field }">
           <InputText v-model="data[field]" class="mr-4 w-full" placeholder="文字列" />
 
-          <ColorPicker v-model="data['color']" class="mx-2" />
+          <ColorPicker v-model="data['color']" class="mx-2" @change="data['color'] = '#' + data['color']" />
           <InputText v-model="data['color']" class="w-6rem" placeholder="色" />
         </template>
       </Column>
@@ -94,13 +94,13 @@ const projectService = inject(ProjectServiceKey)
 const projects = ref<Partial<Project>[]>([])
 const editingRows = ref<Partial<Project>[]>([])
 
-const init = () => {
+const onInit = () => {
   editingRows.value = []
   projects.value = [...(projectService?.projects.value ?? [])]
 }
 
 watch(() => props.visible, (val) => {
-  val && init()
+  val && onInit()
 })
 
 /// ////////////////////////////////////////
@@ -149,8 +149,8 @@ const onRowEditSave = async (project: Project) => {
     : await ProjectAPI.create(params)
 
   // 画面更新
-  projectService?.fetch()
-  init()
+  await projectService?.fetch()
+  onInit()
 
   const base = editingRows.value.find(row => row.id === project.id)
   emit('update:project', updProject, base)
@@ -168,8 +168,8 @@ const onRowDelete = (project: Project) => {
       await ProjectAPI.remove(project.id)
 
       // 画面更新
-      projectService?.fetch()
-      init()
+      await projectService?.fetch()
+      onInit()
     },
   })
 }
