@@ -80,3 +80,8 @@ export const parseReport = (form: FormReport): Omit<DBReport, MetaColumns> => {
       : null,
   }
 }
+
+export const toLog = (report: Report) => {
+  const text = report.text.slice(0, 10).replace(/\r?\n/g, ' ')
+  return `[${report.id}]「${text}...」`
+}

@@ -70,7 +70,7 @@
 <script setup lang="ts">
 import { inject } from 'vue'
 import { ProjectAPI } from '~~/src/apis/ProjectAPI'
-import { FormProject, Project } from '~~/src/databases/models/Project'
+import { FormProject, Project, toLog } from '~~/src/databases/models/Project'
 
 const props = defineProps<{
   visible: boolean,
@@ -152,13 +152,13 @@ const onRowEditSave = async (project: Project) => {
       ? await ProjectAPI.update(projectId, params)
       : await ProjectAPI.create(params)
 
-    // 画面更新
+    // データの置き換え
     await projectService?.fetch()
     onInit()
 
     // 更新通知
     const method = projectId ? '更新' : '作成'
-    notify.success(`[${updProject.id}]「${updProject.name}」を${method}しました。`)
+    notify.success(`${toLog(updProject)}を${method}しました。`)
     emit('update:project')
   } catch (err) {
     notify.thrown(err)
@@ -174,14 +174,15 @@ const onRowDelete = (project: Project) => {
     acceptClass: 'p-button-danger',
     accept: async () => {
       try {
+        // delete 処理
         await ProjectAPI.remove(project.id)
 
-        // 画面更新
+        // データの置き換え
         await projectService?.fetch()
         onInit()
 
         // 更新通知
-        notify.success(`[${project.id}]「${project.name}」を削除しました。`)
+        notify.success(`${toLog(project)}を削除しました。`)
         emit('update:project')
       } catch (err) {
         notify.thrown(err)

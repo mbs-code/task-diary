@@ -52,3 +52,7 @@ export const parseProject = (form: FormProject): Omit<DBProject, MetaColumns> =>
     icon: form.icon ?? null,
   }
 }
+
+export const toLog = (project: Project) => {
+  return `[${project.id}]「${project.name}」`
+}

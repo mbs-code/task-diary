@@ -2,17 +2,23 @@ import { ReportAPI } from '~~/src/apis/ReportAPI'
 import { Report } from '~~/src/databases/models/Report'
 
 export const useTodoService = () => {
+  const notify = useNotify()
+
   const reports = ref<Report[]>([])
   const page = ref<number>(1)
 
   const fetchList = async () => {
-    // TODO: 後で調整
-    reports.value = await ReportAPI.getAll({
-      onlyTodo: true,
-      // limit: 5,
-      // page: page.value,
-      sorts: [['updated_at', 'desc']],
-    })
+    try {
+      // TODO: 後で調整
+      reports.value = await ReportAPI.getAll({
+        onlyTodo: true,
+        // limit: 5,
+        // page: page.value,
+        sorts: [['updated_at', 'desc']],
+      })
+    } catch (err) {
+      notify.thrown(err)
+    }
   }
 
   const replaceList = (report: Report) => {

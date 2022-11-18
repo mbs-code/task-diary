@@ -128,7 +128,7 @@ const onReload = () => {
 }
 
 const onSeed = () => {
-  console.log('seed')
+  // console.log('seed')
   // const database = useDatabase()
   // await database.testSeed()
 
@@ -136,7 +136,7 @@ const onSeed = () => {
 }
 
 const onFresh = () => {
-  console.log('fresh')
+  // console.log('fresh')
   // const database = useDatabase()
   // await database.dbWipe()
 
