@@ -38,7 +38,7 @@ export const formatStatus = (db: DBStatus): Status => {
 export const parseStatus = (form: FormStatus): Omit<DBStatus, MetaColumns> => {
   // 簡易バリデ
   const name = form.name?.trim()
-  if (!name) { throw new Error('name is empty') }
+  if (!name) { throw new Error('名称が空欄です。') }
 
   return {
     name: form.name,

@@ -12,8 +12,8 @@ export class TauriSqliteDriver implements Driver {
   readonly #config: TauriSqliteDialectConfig
   readonly #connectionMutex = new ConnectionMutex()
 
-  #db?: TauriDatabase
-  #connection?: DatabaseConnection
+  #db: TauriDatabase | undefined
+  #connection!: DatabaseConnection
 
   constructor (config: TauriSqliteDialectConfig) {
     this.#config = Object.freeze({ ...config })
@@ -48,7 +48,7 @@ export class TauriSqliteDriver implements Driver {
 
   // eslint-disable-next-line require-await
   async destroy (): Promise<void> {
-    this.#db = null
+    this.#db = undefined
   }
 }
 

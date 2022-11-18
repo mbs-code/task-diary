@@ -63,7 +63,8 @@ export class ProjectAPI {
       .selectFrom('projects')
       .selectAll()
       .where('id', '=', projectId)
-      .executeTakeFirstOrThrow()
+      .executeTakeFirst()
+    if (!dbProject) { throw new Error(`取得に失敗しました。(p${projectId})`) }
 
     return formatProject(dbProject)
   }
@@ -81,7 +82,7 @@ export class ProjectAPI {
       .select([db.fn.count('id').as('count')])
       .where('name', '=', parse.name)
       .executeTakeFirst() as { count: bigint }
-    if (count > 0) { throw new Error('duplicate name') }
+    if (count > 0) { throw new Error('この名称は既に使われています。') }
 
     // 作成
     const { insertId } = await db
@@ -110,7 +111,7 @@ export class ProjectAPI {
       .where('name', '=', parse.name)
       .where('id', '<>', projectId)
       .executeTakeFirst() as { count: bigint }
-    if (count > 0) { throw new Error('duplicate name') }
+    if (count > 0) { throw new Error('この名称は既に使われています。') }
 
     // 更新
     const { numUpdatedRows } = await db
@@ -123,7 +124,7 @@ export class ProjectAPI {
       .executeTakeFirst()
 
     if (Number(numUpdatedRows) === 0) {
-      throw new Error('no result')
+      throw new Error(`更新に失敗しました。(p${projectId})`)
     }
 
     return await this.get(Number(projectId))
@@ -139,7 +140,7 @@ export class ProjectAPI {
       .select([db.fn.count('id').as('count')])
       .where('project_id', '=', project.id)
       .executeTakeFirst() as { count: bigint }
-    if (count > 0) { throw new Error('this has relation') }
+    if (count > 0) { throw new Error('使用されているため、削除できません。') }
 
     // 削除
     const { numDeletedRows } = await db
@@ -148,7 +149,7 @@ export class ProjectAPI {
       .executeTakeFirst()
 
     if (Number(numDeletedRows) === 0) {
-      throw new Error('no result')
+      throw new Error(`削除に失敗しました。(p${projectId})`)
     }
 
     return true

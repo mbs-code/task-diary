@@ -97,7 +97,8 @@ export class ReportAPI {
       .selectFrom('reports')
       .selectAll()
       .where('id', '=', reportId)
-      .executeTakeFirstOrThrow()
+      .executeTakeFirst()
+    if (!dbReport) { throw new Error(`取得に失敗しました。(r${reportId})`) }
 
     const report = formatReport(dbReport)
 
@@ -151,7 +152,7 @@ export class ReportAPI {
       .executeTakeFirst()
 
     if (Number(numUpdatedRows) === 0) {
-      throw new Error('no result')
+      throw new Error(`更新に失敗しました。(r${reportId})`)
     }
 
     return await this.get(Number(reportId))
@@ -167,7 +168,7 @@ export class ReportAPI {
       .executeTakeFirst()
 
     if (Number(numDeletedRows) === 0) {
-      throw new Error('no result')
+      throw new Error(`削除に失敗しました。(r${reportId})`)
     }
 
     return true
