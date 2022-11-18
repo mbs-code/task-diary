@@ -15,11 +15,6 @@
 import { MenuItem } from 'primevue/menuitem'
 import { Report } from '~~/src/databases/models/Report'
 
-// eslint-disable-next-line func-call-spacing
-const emit = defineEmits<{
-  (e: 'edit:report', report?: Partial<Report>): void,
-}>()
-
 const reportService = inject(ReportServiceKey)
 const reportAction = inject(ReportActionKey)
 const todo = computed(() => reportService?.todo)
@@ -48,11 +43,6 @@ const menuItems = computed<MenuItem[]>(() => {
         label: 'コピーをタスクに作成',
         icon: 'pi pi-inbox',
         command: () => reportAction?.onSwitchTask(report, true),
-      },
-      {
-        label: '編集',
-        icon: 'pi pi-pencil',
-        command: () => emit('edit:report', report),
       },
       {
         label: isStar ? '星を外す' : '星をつける',
