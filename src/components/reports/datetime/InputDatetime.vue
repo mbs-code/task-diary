@@ -1,5 +1,5 @@
 <template>
-  <div @click="openCalendarDialog">
+  <div @click="openCalendarOverlay">
     <span class="w-full p-input-icon-left p-input-icon-right">
       <i class="pi pi-calendar" />
 
@@ -19,7 +19,6 @@
     </span>
 
     <OverlayPanel
-      id="overlay_panel"
       ref="overlayRef"
       append-to="body"
       :show-close-icon="true"
@@ -59,7 +58,7 @@ const onDelete = () => emit('update:modelValue', undefined)
 ///
 
 const overlayRef = ref()
-const openCalendarDialog = (event: MouseEvent) => {
+const openCalendarOverlay = (event: MouseEvent) => {
   overlayRef.value.toggle(event)
 }
 </script>
