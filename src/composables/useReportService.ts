@@ -3,10 +3,10 @@ import { Report } from '~~/src/databases/models/Report'
 
 export const useReportService = (
   mainRef: Ref,
-  _timelineRef: Ref,
+  timelineRef: Ref,
   _todoRef: Ref,
 ) => {
-  const timelineService = useTimelineService()
+  const timelineService = useTimelineService(timelineRef)
   const todoService = useTodoService()
 
   /** レポートをリストに追加・更新する */
@@ -29,7 +29,7 @@ export const useReportService = (
 
     // フォーカス
     nextTick(() => {
-      const dom = mainRef.value?.$el.querySelector(`[name=report-${report.id}]`)
+      const dom = timelineRef.value?.$el.querySelector(`[name=report-${report.id}]`)
       dom.scrollIntoView({ behavior: 'smooth' })
     })
   }
