@@ -29,7 +29,7 @@ export const useReportService = (
 
     // フォーカス
     nextTick(() => {
-      const dom = timelineRef.value?.$el.querySelector(`[name=report-${report.id}]`)
+      const dom = mainRef.value?.$el.querySelector(`[name=report-${report.id}]`)
       dom.scrollIntoView({ behavior: 'smooth' })
     })
   }
