@@ -40,13 +40,16 @@
     </div>
 
     <!-- 下部フォーム -->
-    <div class="min-h-3rem">
+    <div>
       <Textarea
         ref="textareaRef"
         v-model="form.text"
         class="w-full max-w-full min-w-full min-h-6rem"
         auto-resize
       />
+      <div class="h-full text-right text-xs" style="color: var(--surface-500)">
+        {{ length }}
+      </div>
     </div>
   </div>
 </template>
@@ -99,6 +102,8 @@ const form = reactive<{
   startAt: undefined,
   isStar: false,
 })
+
+const length = computed(() => form.text.length.toLocaleString())
 
 const onInit = () => {
   form.text = props.report?.text ?? ''
