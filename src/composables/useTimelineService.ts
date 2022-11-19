@@ -15,7 +15,7 @@ export const useTimelineService = (timelineRef: Ref) => {
 
   const onLoadPrev = async () => {
     // 前の要素を取ってくる
-    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     const _cnt = await fetchList()
     // TODO: 完了したらトースト
     // if (cnt > 0) {
