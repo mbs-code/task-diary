@@ -1,4 +1,3 @@
-/* eslint-disable import/named */
 import { Migration } from 'kysely'
 import * as CreateInitTable from './migrations/20221922_create_init_table'
 

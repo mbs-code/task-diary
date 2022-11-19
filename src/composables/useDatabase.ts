@@ -1,4 +1,3 @@
-/* eslint-disable import/named */
 import { Kysely, Migrator } from 'kysely'
 import { testSeeder } from '~~/src/databases/seeders/TestSeeder'
 import { Tables } from '~~/src/databases/Tables'

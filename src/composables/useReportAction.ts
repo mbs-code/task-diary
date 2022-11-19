@@ -84,7 +84,7 @@ export const useReportAction = (service: ReturnType<typeof useReportService>) =>
 
       confirm.require({
         // eslint-disable-next-line no-irregular-whitespace
-        message: `「${text}...」\n  のレポートを削除しますか？`,
+        message: `「${text}...」\n　のレポートを削除しますか？`,
         header: '削除の確認',
         icon: 'pi pi-info-circle',
         acceptClass: 'p-button-danger',

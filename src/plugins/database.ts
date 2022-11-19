@@ -1,4 +1,3 @@
-/* eslint-disable import/named */
 import { Kysely, Migrator } from 'kysely'
 import { BuildinMigrationProvider } from '~~/src/databases/libs/BuildinMigrationProvider'
 import { TauriSqliteDialect } from '~~/src/databases/libs/TauriSqliteDialect'
