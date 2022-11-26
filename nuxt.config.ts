@@ -1,9 +1,6 @@
 import eslint from 'vite-plugin-eslint'
 
 const isProduct = process.env.NODE_ENV === 'production'
-const headScript = isProduct
-  ? [{ src: 'http://localhost:8098' }]
-  : []
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -19,7 +16,9 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      script: headScript,
+      script: isProduct
+        ? []
+        : [{ src: 'http://localhost:8098' }],
     },
   },
 
