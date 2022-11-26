@@ -63,11 +63,11 @@ watch(() => props.modelValue, () => {
 const startDate = computed(() => {
   // 左上の日を算出
   const targetWod = targetDate.value.day() // 曜日
-  let add = targetWod - startWod.value // 基準曜日への加算日数
-  if (add > 0) { add = add - 7 } // 曜日またぎ修正
+  let delta = targetWod - startWod.value // 基準曜日への加算日数
+  if (delta > 0) { delta = delta - 7 } // 曜日またぎ修正
 
   // 算出
-  let start = targetDate.value.clone().add(add, 'day')
+  let start = targetDate.value.clone().subtract(delta, 'day')
 
   // 終了日が 8日以降になる場合は一週間早める
   const end = start.add(7 * 6 - 1, 'day')
