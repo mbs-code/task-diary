@@ -14,6 +14,7 @@ export type SearchReport = {
   text?: string
   onlyTask?: boolean // タスク要素
   onlyTodo?: boolean // TO-DO要素
+  projectId?: number // プロジェクトID
   until?: Dayjs // この時間以前(含む)
   since?: Dayjs // この日以降(含む)
   page?: number
@@ -32,6 +33,7 @@ export class ReportAPI {
       .if(Boolean(search?.text), qb => qb.where('text', 'like', `%${search?.text ?? ''}%`))
       .if(Boolean(search?.onlyTask), qb => qb.where('start_at', 'is not', null))
       .if(Boolean(search?.onlyTodo), qb => qb.where('start_at', 'is', null))
+      .if(Boolean(search?.projectId), qb => qb.where('project_id', '=', search?.projectId ?? 0))
       .if(Boolean(search?.until), qb => qb.where('start_at', '<=', search?.until?.toISOString() ?? ''))
       .if(Boolean(search?.since), qb => qb.where('start_at', '>=', search?.since?.toISOString() ?? ''))
 
