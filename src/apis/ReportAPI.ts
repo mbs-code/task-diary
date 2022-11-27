@@ -33,7 +33,7 @@ export class ReportAPI {
       .if(Boolean(search?.onlyTask), qb => qb.where('start_at', 'is not', null))
       .if(Boolean(search?.onlyTodo), qb => qb.where('start_at', 'is', null))
       .if(Boolean(search?.until), qb => qb.where('start_at', '<=', search?.until?.toISOString() ?? ''))
-      .if(Boolean(search?.since), qb => qb.where('start_at', '>=', search?.until?.toISOString() ?? ''))
+      .if(Boolean(search?.since), qb => qb.where('start_at', '>=', search?.since?.toISOString() ?? ''))
 
     // NOTE: page limit sorts など、countに影響しないものは実装しない
     return { db, query }
