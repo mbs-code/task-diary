@@ -39,6 +39,7 @@ const props = defineProps<{
 // eslint-disable-next-line func-call-spacing
 const emit = defineEmits<{
   (e: 'update:modelValue', value?: Dayjs): void,
+  (e: 'change:range', start?: Dayjs, end?: Dayjs): void,
 }>()
 
 type DateItem = {
@@ -70,11 +71,13 @@ const startDate = computed(() => {
   let start = targetDate.value.clone().subtract(delta, 'day')
 
   // 終了日が 8日以降になる場合は一週間早める
-  const end = start.add(7 * 6 - 1, 'day')
+  let end = start.add(7 * 6 - 1, 'day')
   if (end.date() >= 8) {
     start = start.add(-7, 'day')
+    end = end.add(-7, 'day')
   }
 
+  emit('change:range', start.clone(), end.clone())
   return start
 })
 
@@ -157,6 +160,7 @@ const onClickDay = (item: DateItem) => {
 }
 
 const onClickToday = () => {
+  targetDate.value = dayjs().startOf('month')
   emit('update:modelValue', dayjs())
 }
 
