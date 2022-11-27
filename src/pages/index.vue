@@ -6,14 +6,8 @@
 
         <Button
           class="p-button-plain p-button-text !w-8 !h-8"
-          icon="pi pi-hourglass"
-          @click="onSeed"
-        />
-
-        <Button
-          class="p-button-plain p-button-text !w-8 !h-8"
-          icon="pi pi-circle"
-          @click="onFresh"
+          icon="pi pi-calendar"
+          @click="openReportSearchDialog"
         />
 
         <div class="flex-grow" name="padding" />
@@ -52,6 +46,10 @@
           <ReportTodoTray class="p-4" />
         </SplitterPanel>
       </Splitter>
+
+      <ReportSearchDialog
+        v-model:visible="showReportSearchDialog"
+      />
 
       <ProjectEditDialog
         v-model:visible="showProjectEditDialog"
@@ -115,6 +113,11 @@ onMounted(() => {
 /// ////////////////////////////////////////
 // ダイアログ系
 
+const showReportSearchDialog = ref<boolean>(false)
+const openReportSearchDialog = () => {
+  showReportSearchDialog.value = true
+}
+
 const showProjectEditDialog = ref<boolean>(false)
 const openProjectEditDialog = () => {
   showProjectEditDialog.value = true
@@ -127,19 +130,19 @@ const onReload = () => {
   window.location.reload()
 }
 
-const onSeed = () => {
-  // console.log('seed')
-  // const database = useDatabase()
-  // await database.testSeed()
+// const onSeed = () => {
+//   console.log('seed')
+//   const database = useDatabase()
+//   await database.testSeed()
 
-  // location.reload()
-}
+//   location.reload()
+// }
 
-const onFresh = () => {
-  // console.log('fresh')
-  // const database = useDatabase()
-  // await database.dbWipe()
+// const onFresh = () => {
+//   console.log('fresh')
+//   const database = useDatabase()
+//   await database.dbWipe()
 
-  // location.reload()
-}
+//   location.reload()
+// }
 </script>

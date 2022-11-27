@@ -17,14 +17,27 @@
     </div>
 
     <div v-for="(weekItem, _) of monthItem" :key="_" class="flex gap-1">
-      <Button
-        v-for="(dateItem, __) of weekItem"
-        :key="`${_}-${__}`"
-        class="w-2.25rem h-2.25rem !p-0"
-        v-bind="dateItem.bind"
-        :label="dateItem.label"
-        @click="onClickDay(dateItem)"
-      />
+      <template v-for="(dateItem, __) of weekItem" :key="`${_}-${__}`">
+        <Button
+          class="w-2.25rem !p-0"
+          :class="hasEvent ? 'h-3rem' : 'h-2.25rem'"
+          v-bind="dateItem.bind"
+          @click="onClickDay(dateItem)"
+        >
+          <div class="flex flex-col w-full self-start">
+            <div>{{ dateItem.label }}</div>
+
+            <div>
+              <Badge
+                v-if="dateItem.count > 0"
+                class="!px-1 !m-0"
+                severity="info"
+                :value="dateItem.count"
+              />
+            </div>
+          </div>
+        </Button>
+      </template>
     </div>
   </div>
 </template>
@@ -34,6 +47,7 @@ import { Dayjs } from 'dayjs'
 
 const props = defineProps<{
   modelValue?: Dayjs,
+  events?: { date: Dayjs, count: number }[],
 }>()
 
 // eslint-disable-next-line func-call-spacing
@@ -45,9 +59,8 @@ const emit = defineEmits<{
 type DateItem = {
   date: Dayjs,
   label: string,
-  // day: number,
   bind: { [key: string]: unknown },
-  // hasBadge: boolean,
+  count: number,
 }
 
 ///
@@ -60,6 +73,8 @@ const startWod = ref<0 | 2 | 3 | 1 | 4 | 5 | 6>(0) // 週の開始曜日
 watch(() => props.modelValue, () => {
   targetDate.value = (props.modelValue?.startOf('month') ?? dayjs()).startOf('month')
 }, { immediate: true })
+
+const hasEvent = computed(() => props.events !== undefined)
 
 const startDate = computed(() => {
   // 左上の日を算出
@@ -120,12 +135,15 @@ const monthItem = computed(() => {
         classAry.push('p-button-text')
       }
 
+      // イベント
+      const count = (props.events ?? [])
+        .find(e => e.date.isSame(ptr, 'date'))?.count
+
       weekDates.push({
         date: ptr.clone(),
         label: String(ptr.date()),
-        bind: {
-          class: classAry,
-        },
+        bind: { class: classAry },
+        count: count ?? 0,
       })
 
       // 一日進める
